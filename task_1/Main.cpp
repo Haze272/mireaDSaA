@@ -78,11 +78,11 @@ void exercise4() {
 	// клавиатуры.
 	//   Делитель - 128
 
-	int x16;
-	cout << "x16 = ";
-	cin >> x16;
+	int x;
+	cout << "x = ";
+	cin >> x;
 	int divider = 7;
-	int result = x16 >> divider;
+	int result = x >> divider;
 	cout << "Result = " << result << endl;
 }
 
@@ -108,10 +108,10 @@ void exercise5() {
 }
 
 int main() {
-	exercise1();
-	exercise2();
-	exercise3();
-	exercise4();
+	//exercise1();
+	//exercise2();
+	//exercise3();
+	//exercise4();
 	exercise5();
 
 	return 0;
