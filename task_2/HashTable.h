@@ -1,13 +1,25 @@
-#pragma once
+п»ї#ifndef HASHTABLE_H
+#define HASHTABLE_H
+
+#include <iostream>
+#include <string>
+#include <map>
+
+using namespace std;
+
 class HashTable
 {
+	map <int, string> hTable;
 public:
-	void insertElem();     // Вставить ключ в таблицу
-	void deleteElem();     // Удалить ключ из таблицы
-	int findKey();         // Найти ключ в таблице
-	void rehashTable();    // Рехешировать таблицу
-	void tableShow();      // Вывод хештаблицы в консоль
 
-	int hasher();          // Непосредственно хэш-функция
+	void insertElem(string productName, int article);  // Р’СЃС‚Р°РІРёС‚СЊ РєР»СЋС‡ РІ С‚Р°Р±Р»РёС†Сѓ
+	void deleteElem(int hashIndex);                    // РЈРґР°Р»РёС‚СЊ РєР»СЋС‡ РёР· С‚Р°Р±Р»РёС†С‹
+	int findKey(string productName);                   // РќР°Р№С‚Рё РєР»СЋС‡ РІ С‚Р°Р±Р»РёС†Рµ
+
+	void tableShow();								   // Р’С‹РІРѕРґ С…РµС€С‚Р°Р±Р»РёС†С‹ РІ РєРѕРЅСЃРѕР»СЊ
+	void rehashTable();								   // Р РµС…РµС€РёСЂРѕРІР°С‚СЊ С‚Р°Р±Р»РёС†Сѓ
+
+	int hasher(string, int);					   // РќРµРїРѕСЃСЂРµРґСЃС‚РІРµРЅРЅРѕ С…СЌС€-С„СѓРЅРєС†РёСЏ
 };
 
+#endif // HASHTABLE_H
