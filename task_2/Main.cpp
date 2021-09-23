@@ -4,21 +4,34 @@
 
 using namespace std;
 
-// Необходимо для поиска переменной по имени
-bool operator==(string left, const string right)
+class hashObject
 {
-    return left == right;
-}
+public:
+    hashObject(const string& name, const size_t article)
+        :o_name(name), o_article(article) {}
 
-size_t hasher(string id)
+    string getName() const { // const после скобок указывает на то, что функция не модифицирует состояние объекта для которого она вызывается.
+        return o_name;
+    }
+
+    int getArticle() const {
+        return o_article;
+    }
+
+private:
+    string o_name;
+    int o_article;
+};
+
+size_t hasher(const hashObject& id)
 {
     // Если имя переменной составляет один символ - возвращается его код,
     // умноженный на два
-    if (id.length() == 1)
-        return 2 * size_t(id[0]);
+    if (id.getName().length() == 1)
+        return 2 * size_t(id.getName()[0]);
 
     // Иначе возвращается сумма кодов первых двух символов
-    return size_t(id[0]) + size_t(id[1]);
+    return size_t(id.getName()[0]) + size_t(id.getName()[1]);
 }
 
 // Класс "Хэш-таблица", основанная на методе цепочек
@@ -36,30 +49,16 @@ public:
     static const size_t hash_table_size = max_hash_value - min_hash_value;
 
 public:
-    void add(const string id)
+    void add(const hashObject& id)
     {
         // Добавление идентификатора в список, расположенный в таблице по
         // индексу, вычисленному хэш-функцией (с учётом смещения)
-        m_hash_table[hasher(id) - min_hash_value].push_back(id);
+        m_hash_table[hasher(id) - min_hash_value].push_back(id.getArticle());
     }
 
-    
-    string get(const string id_name)
-    {
-        // Сохраняется ссылка на список, в котором потенциально будет
-        // расположен идентификатор (для простоты)
-        list<string>& line = m_hash_table[hasher(id_name) - min_hash_value];
-
-        // Поиск идентификаторы в списке по имени
-        list<string>::iterator it = find(line.begin(), line.end(), id_name);
-
-        // Если идентификатор найден - возвращаем ссылку на него
-        return *it;
-    }
-
-private:
+public:
     // Хэш-таблица - массив связных списков идентификаторов
-    list<string> m_hash_table[hash_table_size];
+    list<int> m_hash_table[hash_table_size];
 };
 
 int main()
@@ -68,29 +67,18 @@ int main()
     HashTable ht;
 
     
-    ht.add("a");
-    ht.add("aa");
-    ht.add("if");
-    ht.add("fi");
+    ht.add(hashObject("aa", 545466));
+    ht.add(hashObject("aa", 777777));
+    ht.add(hashObject("if", 898889));
+    ht.add(hashObject("fi", 777450));
 
-    cout << hasher("a") << endl;
-    cout << hasher("aa") << endl;
-    cout << hasher("if") << endl;
-    cout << hasher("fi") << endl;
+    // cout << hasher(hashObject("aa", 545466)) << endl; // 194
+                                                         // 194 - 113 = искомый индекс
 
-    cout << endl;
-
-    cout << int('a') << endl;
-    cout << int('A') << endl;
-    cout << int('0') << endl;
-    cout << int('z') << endl;
+    cout << ht.m_hash_table[194 - 113].front() << endl;
+    cout << ht.m_hash_table[194 - 113].back() << endl;
 
     cout << endl;
-
-    cout << ht.get("a") << endl;
-    cout << ht.get("aa") << endl;
-    cout << ht.get("if") << endl;
-    cout << ht.get("fi") << endl;
 
     return 0;
 }
