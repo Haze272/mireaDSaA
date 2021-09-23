@@ -56,6 +56,19 @@ public:
         m_hash_table[hasher(id) - min_hash_value].push_back(id.getArticle());
     }
 
+    void showTable() {
+        list<hashObject>::iterator it
+
+        cout << "--------------------------" << endl;
+        cout << "key    values" << endl;
+        for (int i = min_hash_value; i <= max_hash_value; i++) {
+            if (this->m_hash_table[i].empty() == false) {
+                // todo: вывод всех элементов
+
+            }
+        }
+    }
+
 public:
     // Хэш-таблица - массив связных списков идентификаторов
     list<int> m_hash_table[hash_table_size];
@@ -79,6 +92,7 @@ int main()
     cout << ht.m_hash_table[194 - 113].back() << endl;
 
     cout << endl;
+    ht.showTable();
 
     return 0;
 }
