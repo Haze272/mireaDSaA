@@ -63,8 +63,16 @@ public:
         cout << "key    values" << endl;
         for (int i = min_hash_value; i <= max_hash_value; i++) {
             if (this->m_hash_table[i].empty() == false) {
+<<<<<<< Updated upstream
                 // todo: вывод всех элементов
 
+=======
+                cout << i + 113;
+                for (auto iter = m_hash_table[i].begin(); iter != m_hash_table[i].end(); iter++) {
+                    cout << "     " << *iter;
+                }
+                cout << endl;
+>>>>>>> Stashed changes
             }
         }
     }
