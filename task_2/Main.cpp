@@ -56,7 +56,20 @@ public:
         // индексу, вычисленному хэш-функцией (с учётом смещения)
         m_hash_table[hasher(id) - min_hash_value].push_back(id.getArticle());
     }
-    
+
+    void deleteElem(const hashObject& id) {
+        size_t aHex = (hasher(id) - min_hash_value);
+        
+        for (list<int>::iterator vlad = m_hash_table[aHex].begin(); vlad != m_hash_table[aHex].end(); ++vlad) {
+            if (*vlad == id.getArticle()) {
+                cout << "Found\n";
+                vlad = m_hash_table[aHex].erase(vlad);
+                return;
+                cout << "Found\n";
+            }
+            cout << "Im here\n";
+        }
+    }
     void showTable() {
 
         cout << "--------------------------" << endl;
@@ -64,9 +77,18 @@ public:
         for (int i = 0; i < 131; i++) {
             if (this->m_hash_table[i].empty() == false) {
                 cout << i + 113 << "     ";
-                for (auto iter = m_hash_table[i].begin(); iter != m_hash_table[i].end(); iter++) {
-                    cout << *iter << " ";
+                if (m_hash_table[i].size() != 1) {
+                    for (auto iter = m_hash_table[i].begin(); iter != m_hash_table[i].end(); iter++) {
+                        cout << *iter << " ";
+                    }
                 }
+                else if (m_hash_table[i].size() == 1) {
+                    cout << m_hash_table[i].front();
+                }
+                else {
+                    cerr << "GOVNO!!!\n";
+                }
+                
                 cout << endl;
             }
         }
@@ -105,6 +127,15 @@ int main()
     cout << endl;
 
     ht.showTable();
+    
+    ht.deleteElem(hashObject("aa", 777777));
 
+    cout << ht.m_hash_table[81].size() << endl;
+    ht.showTable();
+
+    ht.deleteElem(hashObject("aa", 545466));
+
+    ht.showTable();
+    
     return 0;
 }
