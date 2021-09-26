@@ -1,6 +1,7 @@
 ﻿#include <iostream>
 #include <string>
 #include <list>
+#include <typeinfo>
 
 using namespace std;
 
@@ -55,30 +56,25 @@ public:
         // индексу, вычисленному хэш-функцией (с учётом смещения)
         m_hash_table[hasher(id) - min_hash_value].push_back(id.getArticle());
     }
-
+    
     void showTable() {
-        list<hashObject>::iterator it
 
         cout << "--------------------------" << endl;
-        cout << "key    values" << endl;
-        for (int i = min_hash_value; i <= max_hash_value; i++) {
+        cout << "hash    values" << endl;
+        for (int i = 0; i < 131; i++) {
             if (this->m_hash_table[i].empty() == false) {
-<<<<<<< Updated upstream
-                // todo: вывод всех элементов
-
-=======
-                cout << i + 113;
+                cout << i + 113 << "     ";
                 for (auto iter = m_hash_table[i].begin(); iter != m_hash_table[i].end(); iter++) {
-                    cout << "     " << *iter;
+                    cout << *iter << " ";
                 }
                 cout << endl;
->>>>>>> Stashed changes
             }
         }
     }
 
 public:
     // Хэш-таблица - массив связных списков идентификаторов
+    // TODO: сделать поле приватным.
     list<int> m_hash_table[hash_table_size];
 };
 
@@ -100,6 +96,14 @@ int main()
     cout << ht.m_hash_table[194 - 113].back() << endl;
 
     cout << endl;
+
+    //cout << ht.m_hash_table[131].front() << endl;
+    cout << typeid(ht.m_hash_table[194 - 113].back()).name() << endl;
+    //ht.showTable();
+    cout << ht.m_hash_table[0].empty() << endl;
+
+    cout << endl;
+
     ht.showTable();
 
     return 0;
