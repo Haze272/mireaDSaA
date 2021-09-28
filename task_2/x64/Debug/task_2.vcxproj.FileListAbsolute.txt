@@ -1,0 +1,2 @@
+C:\Users\Марина\Documents\GitHub\mireaDSaA\task_2\x64\Debug\task_2.exe
+C:\Users\Марина\Documents\GitHub\mireaDSaA\task_2\x64\Debug\task_2.pdb
