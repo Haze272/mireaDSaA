@@ -79,7 +79,7 @@ public:
         }
     }
 
-    size_t findElem(const string id) {
+    int findElem(const string id) {
         size_t aHex = hasher1(id) - min_hash_value;
 
         for (list<int>::iterator vlad = m_hash_table[aHex].begin(); vlad != m_hash_table[aHex].end(); ++vlad) {
@@ -93,9 +93,9 @@ public:
 
         cout << "--------------------------" << endl;
         cout << "hash    values" << endl;
-        for (int i = 0; i < 131; i++) {
+        for (int i = 0; i < hash_table_size; i++) {
             if (this->m_hash_table[i].empty() == false) {
-                cout << i + 113 << "     ";
+                cout << i + min_hash_value << "     ";
                 if (m_hash_table[i].size() != 1) {
                     for (auto iter = m_hash_table[i].begin(); iter != m_hash_table[i].end(); iter++) {
                         cout << *iter << " ";
