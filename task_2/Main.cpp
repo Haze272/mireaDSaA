@@ -35,6 +35,17 @@ size_t hasher(const hashObject& id)
     return size_t(id.getName()[0]) + size_t(id.getName()[1]);
 }
 
+size_t hasher1(const string id)
+{
+    // Если имя переменной составляет один символ - возвращается его код,
+    // умноженный на два
+    if (id.length() == 1)
+        return 2 * size_t(id[0]);
+
+    // Иначе возвращается сумма кодов первых двух символов
+    return size_t(id[0]) + size_t(id[1]);
+}
+
 // Класс "Хэш-таблица", основанная на методе цепочек
 // Метод цепочек заключается в следующем: таблица представляет собой массив
 // связных списков фиксированного размера. Вычисленный хэш-функцией хэш является
@@ -56,7 +67,28 @@ public:
         // индексу, вычисленному хэш-функцией (с учётом смещения)
         m_hash_table[hasher(id) - min_hash_value].push_back(id.getArticle());
     }
-    
+
+    void deleteElem(const hashObject& id) {
+        size_t aHex = (hasher(id) - min_hash_value);
+        
+        for (list<int>::iterator vlad = m_hash_table[aHex].begin(); vlad != m_hash_table[aHex].end(); ++vlad) {
+            if (*vlad == id.getArticle()) {
+                vlad = m_hash_table[aHex].erase(vlad);
+                return;
+            }
+        }
+    }
+
+    size_t findElem(const string id) {
+        size_t aHex = hasher1(id) - min_hash_value;
+
+        for (list<int>::iterator vlad = m_hash_table[aHex].begin(); vlad != m_hash_table[aHex].end(); ++vlad) {
+            if (*vlad == aHex) {
+                return *vlad;
+            }
+        }
+    }
+
     void showTable() {
 
         cout << "--------------------------" << endl;
@@ -64,9 +96,18 @@ public:
         for (int i = 0; i < 131; i++) {
             if (this->m_hash_table[i].empty() == false) {
                 cout << i + 113 << "     ";
-                for (auto iter = m_hash_table[i].begin(); iter != m_hash_table[i].end(); iter++) {
-                    cout << *iter << " ";
+                if (m_hash_table[i].size() != 1) {
+                    for (auto iter = m_hash_table[i].begin(); iter != m_hash_table[i].end(); iter++) {
+                        cout << *iter << " ";
+                    }
                 }
+                else if (m_hash_table[i].size() == 1) {
+                    cout << m_hash_table[i].front();
+                }
+                else {
+                    cerr << "GOVNO!!!\n";
+                }
+                
                 cout << endl;
             }
         }
@@ -91,7 +132,7 @@ int main()
 
     // cout << hasher(hashObject("aa", 545466)) << endl; // 194
                                                          // 194 - 113 = искомый индекс
-
+    /*
     cout << ht.m_hash_table[194 - 113].front() << endl;
     cout << ht.m_hash_table[194 - 113].back() << endl;
 
@@ -103,8 +144,20 @@ int main()
     cout << ht.m_hash_table[0].empty() << endl;
 
     cout << endl;
+    */
+    ht.showTable();
+    
+    ht.deleteElem(hashObject("aa", 777777));
 
     ht.showTable();
 
+    ht.deleteElem(hashObject("aa", 545466));
+
+    ht.showTable();
+
+    cout << endl;
+
+    cout << ht.findElem("aa");
+    
     return 0;
 }
