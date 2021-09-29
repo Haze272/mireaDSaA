@@ -18,3 +18,4 @@ task_1/.vs/task_1/v16/.suo
 *.db-wal
 *.db-shm
 task_2/.vs/task_2/v16/.suo
+task_2/hashTable.dat
