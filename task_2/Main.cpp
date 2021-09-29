@@ -5,47 +5,43 @@
 
 using namespace std;
 
-struct Cell // ячейка хеш-таблицы
+// ячейка хеш-таблицы
+struct Cell
 {
-    // "N/A" символизирует пустоту поля 
+    // "N/A" символизирует пустоту поля
     string key_ = "N/A";
-    string phoneNo_ = "N/A";
+    string name_ = "N/A";
 
-    bool isEmpty() const // ячейка пустая?
-    {
-        return key_ == "N/A" && phoneNo_ == "N/A";
+    bool isEmpty() const {
+        return key_ == "N/A" && name_ == "N/A";
     }
-    void output() // вывести поля ячейки
-    {
+
+    void output() {
         cout << " " << key_ << endl;
-        cout << " " << phoneNo_ << endl;
+        cout << " " << name_ << endl;
         cout << "-------------------------" << endl;
     }
 };
 
-int hashIndex(string key, int hashLen) // хеш-функция
-{ // алгоритм взял из гарвардского видео-курса
+// хеш-функция
+int hashIndex(string key, int hashLen) 
+{
     int sum = 0;
     for (int i = 0; i < key.length(); i++)
         sum += key[i];
     return sum % hashLen;
 }
 
-struct HashTable // хеш-таблица
+class HashTable // хеш-таблица
 {
-    const int LEN_ = 99; // максимальный размер
-    Cell* H_; // массив, что хранит элементы таблицы
-
-    HashTable() // конструктор
-    {
+    const int LEN_ = 88;    // размер хэш-таблицы
+    Cell* H_;               // массив, что хранит элементы таблицы
+public:
+    HashTable() {
         H_ = new Cell[LEN_];
     }
-    ~HashTable() // деструктор
-    {
-        delete[] H_;
-    }
-    void add(Cell cell) // добавить новый элемент
-    {
+
+    void add(Cell cell) {
         int index = hashIndex(cell.key_, LEN_); // находим его индекс
         bool found = 0;
         while (found != true) {
@@ -62,28 +58,28 @@ struct HashTable // хеш-таблица
     }
     int find(string key) // найти индекс элемента с заданным ключом
     {
-        int index = hashIndex(key, LEN_); // находим его индекс
+        int index = hashIndex(key, LEN_);         // находим его индекс
 
-        for (int i = index; i < LEN_; i++) // начинаем сдвигаться с указанного места, 
-            if (H_[i].key_ == key) // пока не найдем элемент с таким же ключом
+        for (int i = index; i < LEN_; i++)        // начинаем сдвигаться с указанного места, 
+            if (H_[i].key_ == key)                // пока не найдем элемент с таким же ключом
                 return i;
-        return -1; // -1 значит, что мы не нашли такой элемент
+        return -1;                                // -1 значит, что мы не нашли такой элемент
     }
-    string ext(string key) // извлечь элемент по заданному ключу (по сути, удалить его)
+
+    string deleteElem(string key)
     {
-        int index = find(key); // ищем такой элемент в таблице
-        if (index == -1) return "error"; // если не нашли вернуть строку "ошибка"
-        string phoneNo = H_[index].phoneNo_; // вытаскиваем значение
+        int index = find(key);                    // ищем такой элемент в таблице
+        if (index == -1) return "error";          // если не нашли вернуть строку "ошибка"
+        string name = H_[index].name_;            // вытаскиваем значение
 
-        H_[index].key_ = H_[index].phoneNo_ = "N/A"; // "обнуляем" элемент
+        H_[index].key_ = H_[index].name_ = "N/A"; // "обнуляем" элемент
 
-        return phoneNo;
+        return name;
     }
-    void output() // вывести не пустые элементы
-    {
+
+    void output() {
         for (int i = 0; i < LEN_; i++)
-            if (!H_[i].isEmpty()) // если элемент не пустой
-            {
+            if (!H_[i].isEmpty()) {
                 cout << " i: " << i << endl;
                 H_[i].output();
             }
@@ -100,8 +96,11 @@ int main()
     ht.add({ "nhoJ", "86496932" });
     ht.add({ "Muhhamad", "796796798" });
 
+    ht.output();
 
+    cout << "\n\n\n\n\n";
 
+    ht.deleteElem("John");
     ht.output();
     return 0;
 }
