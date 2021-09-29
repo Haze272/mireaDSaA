@@ -2,6 +2,7 @@
 #include <string>
 #include <list>
 #include <typeinfo>
+#include <fstream>
 
 using namespace std;
 
@@ -117,11 +118,45 @@ public:
     int getLen() {
         return LEN_;
     }
+
+    void writeToFile() {
+        ofstream ffout;
+
+        ffout.open("hashTable.dat", ios::binary);
+
+        if (!ffout)
+        {
+            cout << "file not open";
+            return;
+        }
+
+        for (int i = 0; i < LEN_; i++) {
+            if (!H_[i].isEmpty()) {
+                ffout.write((char*)&H_[i], sizeof(Cell));
+                ffout.clear();
+            }
+        }
+        ffout.close();
+    }
+
+    void readTheFile() {
+        ifstream fii("hashTable.dat", ios::binary);
+        Cell elem;
+        string foo;
+        while (fii)
+        {
+            fii.read((char*)&elem, sizeof(Cell));
+            cout << elem.key_ << " " << elem.name_ << endl;
+        }
+
+        fii.close();
+    }
 };
 
 int main()
 {
-
+    // Here you can uncomment tests of adding and showing methods and rehashing
+    /*
     HashTable ht;
 
     ht.add({ "John", "79256709044" });
@@ -135,6 +170,43 @@ int main()
     ht.add({ "Lo Wan Hung", "72283221337" }); // This element gonna rehash the entire hashtable
     cout << "The new hashtable size is " << ht.getLen() << endl;
     ht.output();
+    */
+    /*
+    ifstream fio("DD.dat", ios::in | ios::binary);//открыли для чтения
+
+    while (!fio.eof())
+    { //читаем массив из трех чисел
+        fio.read((char*)x, 3 * sizeof(int));
+
+        for (int i = 0; i < 3; i++)
+            cout << x[i] << endl;
+    }
+
+    fio.close();
+    */
+    /*
+    int a;
+    ifstream fii;
+
+    fii.open("DD.dat", ios::in | ios::binary);
+    while (!fii.eof())
+    { //читаем по одному числу
+        fii.read((char*)&a, sizeof(int));
+        cout << a << endl;
+    }
+    */
+    HashTable ht;
+    ht.add({ "John", "79256709044" });
+    ht.add({ "Pablo", "79999961265" });
+    ht.add({ "Olbap", "79999675265" });
+    ht.add({ "Marywanna", "7420420420" });
+    ht.add({ "Pedro", "71488657899" });
+    ht.output();
+    cout << "\n-------------------------\n\n";
+
+    ht.writeToFile();
+    ht.readTheFile();
+
 
     return 0;
 }
