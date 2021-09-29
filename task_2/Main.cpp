@@ -122,7 +122,7 @@ public:
     void writeToFile() {
         ofstream ffout;
 
-        ffout.open("hashTable.dat", ios::binary);
+        ffout.open("hashTable.dat", ios::binary | ios::out);
 
         if (!ffout)
         {
@@ -139,74 +139,32 @@ public:
         ffout.close();
     }
 
-    void readTheFile() {
-        ifstream fii("hashTable.dat", ios::binary);
-        Cell elem;
-        string foo;
-        while (fii)
+    // Метод, читающий записи из файла и вставляющий их в хэш-таблицу
+    void readTheFile(Cell& Y)
+    {
+        
+        fstream in("hashTable.dat", ios::binary | ios::in); // Открываем поток ввода
+        
+        in.read((char*)&Y, sizeof Y); //Считываем информацию в объект Y
+        while (!in.eof())
         {
-            fii.read((char*)&elem, sizeof(Cell));
-            cout << elem.key_ << " " << elem.name_ << endl;
+            add(Y);
+            in.read((char*)&Y, sizeof Y);
         }
-
-        fii.close();
+        in.close(); //Закрываем открытый файл
+        
     }
 };
 
 int main()
 {
-    // Here you can uncomment tests of adding and showing methods and rehashing
-    /*
     HashTable ht;
-
-    ht.add({ "John", "79256709044" });
-    ht.add({ "Pablo", "79999961265" });
-    ht.add({ "Olbap", "79999675265" });
-    ht.add({ "Marywanna", "7420420420" });
-    ht.add({ "Pedro", "71488657899" });
+    system("CLS"); //Очистка экрана
+    Cell Yx;
+    ht.readTheFile(Yx);
     ht.output();
-    cout << "The hashtable size is " << ht.getLen() << endl;
 
-    ht.add({ "Lo Wan Hung", "72283221337" }); // This element gonna rehash the entire hashtable
-    cout << "The new hashtable size is " << ht.getLen() << endl;
-    ht.output();
-    */
-    /*
-    ifstream fio("DD.dat", ios::in | ios::binary);//открыли для чтения
-
-    while (!fio.eof())
-    { //читаем массив из трех чисел
-        fio.read((char*)x, 3 * sizeof(int));
-
-        for (int i = 0; i < 3; i++)
-            cout << x[i] << endl;
-    }
-
-    fio.close();
-    */
-    /*
-    int a;
-    ifstream fii;
-
-    fii.open("DD.dat", ios::in | ios::binary);
-    while (!fii.eof())
-    { //читаем по одному числу
-        fii.read((char*)&a, sizeof(int));
-        cout << a << endl;
-    }
-    */
-    HashTable ht;
-    ht.add({ "John", "79256709044" });
-    ht.add({ "Pablo", "79999961265" });
-    ht.add({ "Olbap", "79999675265" });
-    ht.add({ "Marywanna", "7420420420" });
-    ht.add({ "Pedro", "71488657899" });
-    ht.output();
-    cout << "\n-------------------------\n\n";
-
-    ht.writeToFile();
-    ht.readTheFile();
-
+    cin.get();
 
     return 0;
 }
