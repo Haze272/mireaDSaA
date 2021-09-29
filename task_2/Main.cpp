@@ -5,159 +5,103 @@
 
 using namespace std;
 
-class hashObject
+struct Cell // ячейка хеш-таблицы
 {
-public:
-    hashObject(const string& name, const size_t article)
-        :o_name(name), o_article(article) {}
+    // "N/A" символизирует пустоту поля 
+    string key_ = "N/A";
+    string phoneNo_ = "N/A";
 
-    string getName() const { // const после скобок указывает на то, что функция не модифицирует состояние объекта для которого она вызывается.
-        return o_name;
+    bool isEmpty() const // ячейка пустая?
+    {
+        return key_ == "N/A" && phoneNo_ == "N/A";
     }
-
-    int getArticle() const {
-        return o_article;
+    void output() // вывести поля ячейки
+    {
+        cout << " " << key_ << endl;
+        cout << " " << phoneNo_ << endl;
+        cout << "-------------------------" << endl;
     }
-
-private:
-    string o_name;
-    int o_article;
 };
 
-size_t hasher(const hashObject& id)
-{
-    // Если имя переменной составляет один символ - возвращается его код,
-    // умноженный на два
-    if (id.getName().length() == 1)
-        return 2 * size_t(id.getName()[0]);
-
-    // Иначе возвращается сумма кодов первых двух символов
-    return size_t(id.getName()[0]) + size_t(id.getName()[1]);
+int hashIndex(string key, int hashLen) // хеш-функция
+{ // алгоритм взял из гарвардского видео-курса
+    int sum = 0;
+    for (int i = 0; i < key.length(); i++)
+        sum += key[i];
+    return sum % hashLen;
 }
 
-size_t hasher1(const string id)
+struct HashTable // хеш-таблица
 {
-    // Если имя переменной составляет один символ - возвращается его код,
-    // умноженный на два
-    if (id.length() == 1)
-        return 2 * size_t(id[0]);
+    const int LEN_ = 99; // максимальный размер
+    Cell* H_; // массив, что хранит элементы таблицы
 
-    // Иначе возвращается сумма кодов первых двух символов
-    return size_t(id[0]) + size_t(id[1]);
-}
-
-// Класс "Хэш-таблица", основанная на методе цепочек
-// Метод цепочек заключается в следующем: таблица представляет собой массив
-// связных списков фиксированного размера. Вычисленный хэш-функцией хэш является
-// индексом в этом массиве списков. Известно, что список по этому индексу будет
-// содержать все идентификаторы, для которых функция вернула одинаовый хэш.
-// Осталось только найти идентификатор в данном списке и возвратить ссылку на
-// него.
-class HashTable
-{
-public:
-    static const size_t min_hash_value = int('A') + int('0');
-    static const size_t max_hash_value = int('z') + int('z');
-    static const size_t hash_table_size = max_hash_value - min_hash_value;
-
-public:
-    void add(const hashObject& id)
+    HashTable() // конструктор
     {
-        // Добавление идентификатора в список, расположенный в таблице по
-        // индексу, вычисленному хэш-функцией (с учётом смещения)
-        m_hash_table[hasher(id) - min_hash_value].push_back(id.getArticle());
+        H_ = new Cell[LEN_];
     }
-
-    void deleteElem(const hashObject& id) {
-        size_t aHex = (hasher(id) - min_hash_value);
-        
-        for (list<int>::iterator vlad = m_hash_table[aHex].begin(); vlad != m_hash_table[aHex].end(); ++vlad) {
-            if (*vlad == id.getArticle()) {
-                vlad = m_hash_table[aHex].erase(vlad);
+    ~HashTable() // деструктор
+    {
+        delete[] H_;
+    }
+    void add(Cell cell) // добавить новый элемент
+    {
+        int index = hashIndex(cell.key_, LEN_); // находим его индекс
+        bool found = 0;
+        while (found != true) {
+            if (index == LEN_)
+                index = 0;
+            if (H_[index].isEmpty() == true) {
+                H_[index] = cell; // даем значение элементу по найденному индексу
                 return;
             }
-        }
-    }
-
-    int findElem(const string id) {
-        size_t aHex = hasher1(id) - min_hash_value;
-
-        for (list<int>::iterator vlad = m_hash_table[aHex].begin(); vlad != m_hash_table[aHex].end(); ++vlad) {
-            if (*vlad == aHex) {
-                return *vlad;
+            else {
+                index++;
             }
         }
     }
+    int find(string key) // найти индекс элемента с заданным ключом
+    {
+        int index = hashIndex(key, LEN_); // находим его индекс
 
-    void showTable() {
-
-        cout << "--------------------------" << endl;
-        cout << "hash    values" << endl;
-        for (int i = 0; i < hash_table_size; i++) {
-            if (this->m_hash_table[i].empty() == false) {
-                cout << i + min_hash_value << "     ";
-                if (m_hash_table[i].size() != 1) {
-                    for (auto iter = m_hash_table[i].begin(); iter != m_hash_table[i].end(); iter++) {
-                        cout << *iter << " ";
-                    }
-                }
-                else if (m_hash_table[i].size() == 1) {
-                    cout << m_hash_table[i].front();
-                }
-                else {
-                    cerr << "GOVNO!!!\n";
-                }
-                
-                cout << endl;
-            }
-        }
+        for (int i = index; i < LEN_; i++) // начинаем сдвигаться с указанного места, 
+            if (H_[i].key_ == key) // пока не найдем элемент с таким же ключом
+                return i;
+        return -1; // -1 значит, что мы не нашли такой элемент
     }
+    string ext(string key) // извлечь элемент по заданному ключу (по сути, удалить его)
+    {
+        int index = find(key); // ищем такой элемент в таблице
+        if (index == -1) return "error"; // если не нашли вернуть строку "ошибка"
+        string phoneNo = H_[index].phoneNo_; // вытаскиваем значение
 
-public:
-    // Хэш-таблица - массив связных списков идентификаторов
-    // TODO: сделать поле приватным.
-    list<int> m_hash_table[hash_table_size];
+        H_[index].key_ = H_[index].phoneNo_ = "N/A"; // "обнуляем" элемент
+
+        return phoneNo;
+    }
+    void output() // вывести не пустые элементы
+    {
+        for (int i = 0; i < LEN_; i++)
+            if (!H_[i].isEmpty()) // если элемент не пустой
+            {
+                cout << " i: " << i << endl;
+                H_[i].output();
+            }
+    }
 };
 
 int main()
 {
-    
+
     HashTable ht;
 
-    
-    ht.add(hashObject("aa", 545466));
-    ht.add(hashObject("aa", 777777));
-    ht.add(hashObject("if", 898889));
-    ht.add(hashObject("fi", 777450));
+    ht.add({ "John", "79256709044" });
+    ht.add({ "Pablo", "79999961265" });
+    ht.add({ "nhoJ", "86496932" });
+    ht.add({ "Muhhamad", "796796798" });
 
-    // cout << hasher(hashObject("aa", 545466)) << endl; // 194
-                                                         // 194 - 113 = искомый индекс
-    /*
-    cout << ht.m_hash_table[194 - 113].front() << endl;
-    cout << ht.m_hash_table[194 - 113].back() << endl;
 
-    cout << endl;
 
-    //cout << ht.m_hash_table[131].front() << endl;
-    cout << typeid(ht.m_hash_table[194 - 113].back()).name() << endl;
-    //ht.showTable();
-    cout << ht.m_hash_table[0].empty() << endl;
-
-    cout << endl;
-    */
-    ht.showTable();
-    
-    ht.deleteElem(hashObject("aa", 777777));
-
-    ht.showTable();
-
-    ht.deleteElem(hashObject("aa", 545466));
-
-    ht.showTable();
-
-    cout << endl;
-
-    cout << ht.findElem("aa");
-    
+    ht.output();
     return 0;
 }
