@@ -34,7 +34,7 @@ int hashIndex(string key, int hashLen)
 
 class HashTable // хеш-таблица
 {
-    const int LEN_ = 88;    // размер хэш-таблицы
+    int LEN_ = 8;    // размер хэш-таблицы
     Cell* H_;               // массив, что хранит элементы таблицы
 public:
     HashTable() {
@@ -42,6 +42,12 @@ public:
     }
 
     void add(Cell cell) {
+        // rehash??
+        if ((((double)realElemCount() + 1) / (double)LEN_) >= 0.75) {
+            cout << "-----------REHASHING-----------" << endl;
+            rehashTable();
+        }
+
         int index = hashIndex(cell.key_, LEN_); // находим его индекс
         bool found = 0;
         while (found != true) {
@@ -55,6 +61,8 @@ public:
                 index++;
             }
         }
+        
+        
     }
     int find(string key) // найти индекс элемента с заданным ключом
     {
@@ -77,12 +85,37 @@ public:
         return name;
     }
 
+    int realElemCount() {
+        int counter = 0;
+        for (int i = 0; i < LEN_; i++)
+            if (!H_[i].isEmpty()) {
+                counter++;
+            }
+        return counter;
+    }
+
     void output() {
         for (int i = 0; i < LEN_; i++)
             if (!H_[i].isEmpty()) {
                 cout << " i: " << i << endl;
                 H_[i].output();
             }
+    }
+
+    void rehashTable() {
+        Cell* oldH_ = H_;
+        H_ = new Cell[LEN_ * 2];
+
+        for (int i = 0; i < LEN_; i++) {
+            if (!oldH_[i].isEmpty()) {
+                this->add(oldH_[i]);
+            }
+        }
+        LEN_ *= 2;
+    }
+
+    int getLen() {
+        return LEN_;
     }
 };
 
@@ -93,14 +126,15 @@ int main()
 
     ht.add({ "John", "79256709044" });
     ht.add({ "Pablo", "79999961265" });
-    ht.add({ "nhoJ", "86496932" });
-    ht.add({ "Muhhamad", "796796798" });
+    ht.add({ "Olbap", "79999675265" });
+    ht.add({ "Marywanna", "7420420420" });
+    ht.add({ "Pedro", "71488657899" });
+    ht.output();
+    cout << "The hashtable size is " << ht.getLen() << endl;
 
+    ht.add({ "Lo Wan Hung", "72283221337" }); // This element gonna rehash the entire hashtable
+    cout << "The new hashtable size is " << ht.getLen() << endl;
     ht.output();
 
-    cout << "\n\n\n\n\n";
-
-    ht.deleteElem("John");
-    ht.output();
     return 0;
 }
