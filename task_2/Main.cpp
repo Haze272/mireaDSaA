@@ -2,162 +2,267 @@
 #include <string>
 #include <list>
 #include <typeinfo>
+#include <fstream>
 
 using namespace std;
 
-class hashObject
+// ячейка хеш-таблицы
+struct Cell
 {
-public:
-    hashObject(const string& name, const size_t article)
-        :o_name(name), o_article(article) {}
+    // "N/A" символизирует пустоту поля
+    string key_ = "N/A";
+    string name_ = "N/A";
 
-    string getName() const { // const после скобок указывает на то, что функция не модифицирует состояние объекта для которого она вызывается.
-        return o_name;
+    // Метод структуры определяющий, пустая ли ячейка
+    bool isEmpty() const {
+        return key_ == "N/A" && name_ == "N/A";
     }
 
-    int getArticle() const {
-        return o_article;
+    // Метод вывода текущей ячейки
+    void output() {
+        cout << " " << key_ << endl;
+        cout << " " << name_ << endl;
+        cout << "-------------------------" << endl;
     }
-
-private:
-    string o_name;
-    int o_article;
 };
 
-size_t hasher(const hashObject& id)
+// Хэш-функция (Задание 1.1)
+int hashIndex(string key, int hashLen) 
 {
-    // Если имя переменной составляет один символ - возвращается его код,
-    // умноженный на два
-    if (id.getName().length() == 1)
-        return 2 * size_t(id.getName()[0]);
-
-    // Иначе возвращается сумма кодов первых двух символов
-    return size_t(id.getName()[0]) + size_t(id.getName()[1]);
+    int sum = 0;
+    for (int i = 0; i < key.length(); i++)
+        sum += key[i];
+    return sum % hashLen;
 }
 
-size_t hasher1(const string id)
+// Класс хэш-таблицы
+class HashTable             
 {
-    // Если имя переменной составляет один символ - возвращается его код,
-    // умноженный на два
-    if (id.length() == 1)
-        return 2 * size_t(id[0]);
-
-    // Иначе возвращается сумма кодов первых двух символов
-    return size_t(id[0]) + size_t(id[1]);
-}
-
-// Класс "Хэш-таблица", основанная на методе цепочек
-// Метод цепочек заключается в следующем: таблица представляет собой массив
-// связных списков фиксированного размера. Вычисленный хэш-функцией хэш является
-// индексом в этом массиве списков. Известно, что список по этому индексу будет
-// содержать все идентификаторы, для которых функция вернула одинаовый хэш.
-// Осталось только найти идентификатор в данном списке и возвратить ссылку на
-// него.
-class HashTable
-{
+    int LEN_ = 8; // размер хэш-таблицы
+    Cell* H_;     // массив, что хранит элементы таблицы
 public:
-    static const size_t min_hash_value = int('A') + int('0');
-    static const size_t max_hash_value = int('z') + int('z');
-    static const size_t hash_table_size = max_hash_value - min_hash_value;
-
-public:
-    void add(const hashObject& id)
-    {
-        // Добавление идентификатора в список, расположенный в таблице по
-        // индексу, вычисленному хэш-функцией (с учётом смещения)
-        m_hash_table[hasher(id) - min_hash_value].push_back(id.getArticle());
+    // Конструктор - в нем происходит инициализация таблицы
+    HashTable() {
+        H_ = new Cell[LEN_];
     }
 
-    void deleteElem(const hashObject& id) {
-        size_t aHex = (hasher(id) - min_hash_value);
-        
-        for (list<int>::iterator vlad = m_hash_table[aHex].begin(); vlad != m_hash_table[aHex].end(); ++vlad) {
-            if (*vlad == id.getArticle()) {
-                vlad = m_hash_table[aHex].erase(vlad);
+    // Деструктор освободит память хэш-таблицы
+    ~HashTable() {
+        delete[] H_;
+    }
+
+    // Метод вставки записи в таблицу (Задание 1.2)
+    void add(Cell cell) {
+        if ((((double)realElemCount() + 1) / (double)LEN_) >= 0.75) {   // Условие проверяет, будет ли учтён коеффицент заполненности при добавлении новой записи,
+                                                                        //  если нет - произойдёт рехэширование
+            cout << "-----------REHASHING-----------" << endl;          // Вывод предупреждения о рехэшировании
+            rehashTable();                                              // Вызов метода рехэширования
+        }
+
+        int index = hashIndex(cell.key_, LEN_);                         // Получаем хэш записи
+        while (true) {
+            if (index == LEN_)                                          // В случае, если коллизия произошла на последнем элементе хэш-таблицы - поиск свободной ячейки начнется с начала таблицы
+                index = 0;
+            if (H_[index].isEmpty() == true) {                          // Условие проверяет, занято ли место с этим значением хэша. Если занято - индекс инкрментируется
+                H_[index] = cell;                                       // даем значение элементу по найденному индексу
+
+                updateFile();                                           // добавление этой записи в файл
                 return;
             }
-        }
-    }
-
-    int findElem(const string id) {
-        size_t aHex = hasher1(id) - min_hash_value;
-
-        for (list<int>::iterator vlad = m_hash_table[aHex].begin(); vlad != m_hash_table[aHex].end(); ++vlad) {
-            if (*vlad == aHex) {
-                return *vlad;
+            else {
+                index++;
             }
         }
     }
 
-    void showTable() {
-
-        cout << "--------------------------" << endl;
-        cout << "hash    values" << endl;
-        for (int i = 0; i < hash_table_size; i++) {
-            if (this->m_hash_table[i].empty() == false) {
-                cout << i + min_hash_value << "     ";
-                if (m_hash_table[i].size() != 1) {
-                    for (auto iter = m_hash_table[i].begin(); iter != m_hash_table[i].end(); iter++) {
-                        cout << *iter << " ";
-                    }
-                }
-                else if (m_hash_table[i].size() == 1) {
-                    cout << m_hash_table[i].front();
-                }
-                else {
-                    cerr << "GOVNO!!!\n";
-                }
-                
-                cout << endl;
+    // Метод поиска индекса элемента с заданным ключом, нужен для метода удаления
+    int find(string key) 
+    {
+        int index = hashIndex(key, LEN_);                      // Находим хэш параметра
+            
+            
+        int i = index;                                         // Начинаем поиск нашей записи с индекса, полученного хэш-функцией
+        while (true) {
+            if (i + 1 == LEN_) {
+                i = 0;
             }
+            if (H_[i].key_ == key) {                           // Проверяем ключи
+                return i;                                      // Возвращаем искомый индекс
+            }
+            i++;
         }
+        return -1;                                             // -1 значит, что мы не нашли такой элемент
     }
 
-public:
-    // Хэш-таблица - массив связных списков идентификаторов
-    // TODO: сделать поле приватным.
-    list<int> m_hash_table[hash_table_size];
+    // Задание 1.4: Найти запись с заданным ключом в файле, используя хеш-таблицу.
+    void findElement(string key, Cell& buffer)
+    {
+        fstream in("hashTable.dat", ios::binary | ios::in);    // Открываем поток ввода
+        int counter = 0;                                       // Счётчик, определяющий, какой по счёта запись была передана в файл
+        int index = hashIndex(key, LEN_);                      // находим его индекс
+
+        // Поскольку метод обновления элементов добавляет записи по мере возрастания ключа, то определить к какой
+        // записи сослаться поможет следующий алгоритм: проверяется каждый элемент хэш-таблицы, к счётчику будет прибавлять по единице с каждым не пустым
+        // элементом, пока не найдётся искомай элемент и цикл прервётся
+        for (int i = 0; i < LEN_; i++) {
+            if (!H_[i].isEmpty()) {
+                if (H_[i].key_ == key) {
+                    break;
+                }
+                counter++;
+            }
+        }
+        in.seekg(sizeof(buffer)*counter, ios::beg);            // Перемещение к искомой записи для считывания
+        in.read((char*)&buffer, sizeof buffer);                // Считывание записи
+
+        cout << buffer.key_ << " " << buffer.name_ << endl;
+
+        in.close();                                            // Закрываем открытый файл
+    }
+
+    // Удаление записи из таблицы и файла (Задание 1.3)
+    string deleteElem(string key) {
+        int index = find(key);                                 // ищем такой элемент в таблице
+        if (index == -1) return "error";                       // если не нашли вернуть строку "ошибка"
+        string name = H_[index].name_;                         // вытаскиваем значение
+
+        H_[index].key_ = H_[index].name_ = "N/A";              // "обнуляем" элемент
+        updateFile();
+        return name;
+    }
+
+    // Вспомогательный метод: позволяет узнать, сколько записей присутствует в хэш-таблцице
+    int realElemCount() {
+        int counter = 0;
+        for (int i = 0; i < LEN_; i++)
+            if (!H_[i].isEmpty()) {
+                counter++;
+            }
+        return counter;
+    }
+
+    // Метод вывода хэш-таблицы в консоль (пустые ячейки хэш-таблицы не учитываются) (Задание 5)
+    void output() {
+        cout << "\n-------------------------\n--------Hashtable--------\n-------------------------\n\n";
+
+        for (int i = 0; i < LEN_; i++)            // Цикл перебирает все элементы хэш-таблицы и проверяет каждый на существование там записи
+            if (!H_[i].isEmpty()) {               // В случае, если по текущему индексу запись существует - она будет выведена в консоль
+                cout << " i: " << i << endl;
+                H_[i].output();
+            }
+        cout << endl << endl;
+    }
+
+    // Метод рехэширования (Задание 1.5)
+    void rehashTable() {
+        Cell* oldH_ = H_;                         // Создаётся копия предыдущей хэш-таблицы
+        H_ = new Cell[LEN_ * 2];                  // Полю-таблице присваивается новый массив с длинной, в два раза превышающей старую длину
+        size_t oldLEN_ = LEN_;                    // Создаётся копия предущего размера хэш-таблицы (для перебора старых элементов)
+        LEN_ *= 2;                                // Поле с значением длины хэш-таблицы умножается в два раза
+
+        for (int i = 0; i < oldLEN_; i++) {       // Перебор старых элементов таблицы и добавление их в новую хэш-таблицу
+            if (!oldH_[i].isEmpty()) {
+                add(oldH_[i]);
+            }
+        }
+        updateFile();                             // После рехэширования следует обновить файл с записями
+    }
+
+    // Метод для отладки - позволяет узнать текущий размер таблицы (нужен для проверки метода рехэширования)
+    int getLen() {
+        return LEN_;
+    }
+
+    // Метод вствки записи в бинарный файл
+    void writeToFile(Cell& toCell) {
+        ofstream ffout;
+
+        ffout.open("hashTable.dat", ios::binary | ios::out);
+
+        if (!ffout)
+        {
+            cout << "file not open";
+            return;
+        }
+        
+        ffout.write((char*)&toCell, sizeof(toCell));
+        ffout.close();
+    }
+
+    // Метод, обновляющий файл с записями. Переносит все записи текущей хэш-таблицы в файл, удаляя предущее содержимое
+    void updateFile() {
+        ofstream ffout;
+
+        ffout.open("hashTable.dat", ios::binary | ios::out | ios::trunc);
+
+        if (!ffout)
+        {
+            cout << "file not open";
+            return;
+        }
+
+        for (int i = 0; i < LEN_; i++) {
+            if (!H_[i].isEmpty()) {
+                ffout.write((char*)&H_[i], sizeof(Cell));
+                ffout.clear();
+            }
+        }
+        ffout.close();
+    }
+
+    // Метод, читающий записи из файла и вставляющий их в хэш-таблицу (Задание 1.2)
+    void readTheFile(Cell& Y)
+    {
+        
+        fstream in("hashTable.dat", ios::binary | ios::in); // Открываем поток ввода
+        
+        in.read((char*)&Y, sizeof Y); //Считываем информацию в объект Y
+        while (!in.eof())
+        {
+            add(Y);
+            in.read((char*)&Y, sizeof Y);
+        }
+        in.close(); //Закрываем открытый файл
+        
+    }
 };
 
 int main()
 {
+    HashTable ht;  // Создаём объект хэш-таблицы
+
+    //-----------------------Тест хэш-таблицы-----------------------//
+
+    ht.add({ "05.06.2002", "Margarita" });
+    ht.add({ "27.02.2012", "Stepan" });    // Эта запись является коллизией с предыдущей записью (Задание 2)
+    ht.add({ "20.08.2002", "Max" });
+    ht.add({ "14.02.2000", "Cupid" });
+    ht.add({ "30.12.1999", "Gleb" });
+    ht.output(); // Вывод всех элементов хэш-таблицы
+
+    ht.add({ "09.04.2014", "Victoria" }); // Изначальный размер таблицы был 8, следовательно при добавлении этого элемента
+                                          // коеффицент заполнения станет больше 0.75 и произойдёт рехеширование (Задание 3)
+    ht.output(); // Вывод всех элементов хэш-таблицы
+
+    ht.deleteElem("30.12.1999"); // Удалим запись с ключом 30.12.1999
+    ht.deleteElem("20.08.2002");
+    ht.deleteElem("05.06.2002");
+    ht.output(); // Снова выведем всю таблицу чтобы удостовериться, что запись была удалёна
+
+    //-----------------------Тест записи/чтения-----------------------//
+
+    HashTable ht2;
+
+    Cell cell, cell2, cell3, cell4;
+    ht2.readTheFile(cell); // Читаем записи из файла, который был заполнен предыдущей хэш-таблицей и заполням ими новую хэш-таблицу
+    ht2.output();
+
+    ht2.findElement("14.02.2000", cell2);
+    ht2.findElement("09.04.2014", cell3);
+    ht2.findElement("27.02.2002", cell4);
     
-    HashTable ht;
 
-    
-    ht.add(hashObject("aa", 545466));
-    ht.add(hashObject("aa", 777777));
-    ht.add(hashObject("if", 898889));
-    ht.add(hashObject("fi", 777450));
+    cin.get();
 
-    // cout << hasher(hashObject("aa", 545466)) << endl; // 194
-                                                         // 194 - 113 = искомый индекс
-    /*
-    cout << ht.m_hash_table[194 - 113].front() << endl;
-    cout << ht.m_hash_table[194 - 113].back() << endl;
-
-    cout << endl;
-
-    //cout << ht.m_hash_table[131].front() << endl;
-    cout << typeid(ht.m_hash_table[194 - 113].back()).name() << endl;
-    //ht.showTable();
-    cout << ht.m_hash_table[0].empty() << endl;
-
-    cout << endl;
-    */
-    ht.showTable();
-    
-    ht.deleteElem(hashObject("aa", 777777));
-
-    ht.showTable();
-
-    ht.deleteElem(hashObject("aa", 545466));
-
-    ht.showTable();
-
-    cout << endl;
-
-    cout << ht.findElem("aa");
-    
     return 0;
 }
