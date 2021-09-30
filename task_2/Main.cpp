@@ -55,6 +55,7 @@ public:
         if ((((double)realElemCount() + 1) / (double)LEN_) >= 0.75) {   // Условие проверяет, будет ли учтён коеффицент заполненности при добавлении новой записи,
                                                                         //  если нет - произойдёт рехэширование
             cout << "-----------REHASHING-----------" << endl;          // Вывод предупреждения о рехэшировании
+            clearFile();
             rehashTable();                                              // Вызов метода рехэширования
         }
 
@@ -88,22 +89,30 @@ public:
 
     Cell* find1(string key)
     {
-        int index = hashIndex(key, LEN_);         // находим его индекс
+        int index = hashIndex(key, LEN_);                   // находим его индекс
+        fstream in("hashTable.dat", ios::binary | ios::in); // Открываем поток вывода
+        Cell* elem;
 
-        for (int i = index; i < LEN_; i++)        // начинаем сдвигаться с указанного места, 
-            if (H_[i].key_ == key)                // пока не найдем элемент с таким же ключом
-                return &H_[i];
+        in.read((char*)&elem, sizeof elem);
+        while (!in.eof())
+        {
+            if (elem->key_ == key) {
+                return elem;
+            }
+            in.read((char*)&elem, sizeof elem);
+        }
+
+        in.close();
     }
 
     // Удаление записи из таблицы и файла
     string deleteElem(string key) {
-        int index = find(key);                    // ищем такой элемент в таблице
-        if (index == -1) return "error";          // если не нашли вернуть строку "ошибка"
-        string name = H_[index].name_;            // вытаскиваем значение
+        Cell* elem = find1(key);                    // ищем такой элемент в таблице
+        if (elem->isEmpty()) return "error";          // если не нашли вернуть строку "ошибка"
 
-        H_[index].key_ = H_[index].name_ = "N/A"; // "обнуляем" элемент
+        elem->key_ = elem->name_ = "N/A"; // "обнуляем" элемент
 
-        return name;
+        return elem->name_;
     }
 
     // Вспомогательный метод: позволяет узнать, сколько записей присутствует в хэш-таблцице
@@ -140,7 +149,6 @@ public:
                 add(oldH_[i]);
             }
         }
-        updateFile();                             // После рехэширования следует обновить файл с записями
     }
 
     // Метод для отладки - позволяет узнать текущий размер таблицы (нужен для проверки метода рехэширования)
@@ -185,12 +193,20 @@ public:
         ffout.close();
     }
 
+    void clearFile() {
+        ofstream ffout;
+
+        ffout.open("hashTable.dat", ios::binary | ios::out | ios::trunc);
+
+        ffout.close();
+    }
+
     // Метод, читающий записи из файла и вставляющий их в хэш-таблицу
     void readTheFile(Cell& Y)
     {
-        
+
         fstream in("hashTable.dat", ios::binary | ios::in); // Открываем поток ввода
-        
+
         in.read((char*)&Y, sizeof Y); //Считываем информацию в объект Y
         while (!in.eof())
         {
@@ -198,7 +214,7 @@ public:
             in.read((char*)&Y, sizeof Y);
         }
         in.close(); //Закрываем открытый файл
-        
+
     }
 };
 
@@ -218,21 +234,21 @@ int main()
     ht.add({ "09.04.2014", "Victoria" }); // Изначальный размер таблицы был 8, следовательно при добавлении этого элемента
                                           // коеффицент заполнения станет больше 0.75 и произойдёт рехеширование
     ht.output(); // Вывод всех элементов хэш-таблицы
-
+    /*
     ht.deleteElem("30.12.1999"); // Удалим запись с ключом 30.12.1999
     ht.deleteElem("20.08.2002");
     ht.deleteElem("05.06.2002");
     ht.output(); // Снова выведем всю таблицу чтобы удостовериться, что запись была удалёна
+    */
 
     //-----------------------Тест записи/чтения-----------------------//
-
+    
     HashTable ht2;
+    Cell govno;
+    ht.clearFile();
+    ht2.readTheFile(govno);
 
-    Cell cell;
-    ht2.readTheFile(cell); // Читаем записи из файла, который был заполнен предыдущей хэш-таблицей и заполням ими новую хэш-таблицу
-    ht.output();
-
-
+    ht2.output();
     
 
     cin.get();
