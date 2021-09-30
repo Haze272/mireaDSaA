@@ -1,8 +1,8 @@
 ﻿#include <iostream>
 #include <string>
 #include <list>
-#include <typeinfo>
 #include <fstream>
+#include <time.h> // Для замера времени выполнения команд
 
 using namespace std;
 
@@ -261,8 +261,58 @@ int main()
     ht2.findElement("09.04.2014", cell3);
     ht2.findElement("27.02.2002", cell4);
     
+    //-----------------------Заполнение большим количеством записей (Задание 4)-----------------------//
+
+    HashTable ht3;
+
+    ht3.add({ "05.06.2002", "Margarita" });
+    ht3.add({ "27.02.2012", "Stepan" });
+    ht3.add({ "20.08.2002", "Max" });
+    ht3.add({ "14.02.2000", "Cupid" });
+    ht3.add({ "30.12.1999", "Gleb" });
+      
+    ht3.add({ "09.04.2014", "Victoria" });
+    ht3.add({ "22.04.1996", "Timur" });
+    ht3.add({ "23.04.1996", "Bekmurat" });
+    ht3.add({ "09.10.1996", "Akhmed" });
+    ht3.add({ "14.11.2004", "Alexandr" });
+      
+    ht3.add({ "03.07.2004", "Maria" });
+    ht3.add({ "10.07.2002", "Olga" });
+    ht3.add({ "31.11.2002", "Marina" });
+    ht3.add({ "01.01.2000", "Musya" });
+    ht3.add({ "18.08.1998", "Kesha" });
+
+    ht3.add({ "25.12.1999", "Daria" });
+    ht3.add({ "13.06.1999", "Sasha" });
+    ht3.add({ "18.03.1992", "Gennadiy" });
+    ht3.add({ "21.03.1987", "Slava" });
+    ht3.add({ "09.11.2007", "Leonid" });
+    ht3.output();
+
+    Cell cell5;
+    clock_t start, end;
+
+    // Тест чтения начального элемента
+    start = clock();
+    ht3.findElement("23.04.1996", cell5);
+    end = clock();
+    printf("The read method was executed in %.4f second(s)\n", ((double)end - start) / ((double)CLOCKS_PER_SEC)); // 0.0010 секунд
+
+    // Тест чтения конечного элемента
+    start = clock();
+    ht3.findElement("09.10.1996", cell5);
+    end = clock();
+    printf("The read method was executed in %.4f second(s)\n", ((double)end - start) / ((double)CLOCKS_PER_SEC)); // 0.0010 секунд
+
+    // Тест чтения среднего элемента
+    start = clock();
+    ht3.findElement("27.02.2012", cell5);
+    end = clock();
+    printf("The read method was executed in %.4f second(s)\n", ((double)end - start) / ((double)CLOCKS_PER_SEC)); // 0.0010 секунд
 
     cin.get();
 
     return 0;
 }
+
