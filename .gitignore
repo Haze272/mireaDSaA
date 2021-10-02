@@ -24,3 +24,13 @@ task_2/hashTable.txt
 task_2/Debug/main.obj.enc
 task_2/Debug/main.obj.enc
 *.enc
+*.user
+*.filters
+*.txt
+task_2_open_addressing/task_2/.vs/task_2/v16/.suo
+task_2_open_addressing/.vs/task_2/v16/.suo
+*.json
+*.sqlite
+task_2_chain/.vs/task_2_chain/v16/.suo
+task_2_open_addressing/.vs/task_2/v16/.suo
+task_2_open_addressing/.vs/task_2/v16/.suo
