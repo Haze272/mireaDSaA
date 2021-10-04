@@ -53,7 +53,7 @@ public:
         cout << "  " << cell.article << "     " << cell.name << endl;
         
         if (cell.nextCell) {
-            cout << "DAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMN\n";
+            cout << "PIDORAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAS\n";
             showChain(*cell.nextCell);
         }
     }
@@ -69,24 +69,10 @@ public:
     }
 };
 
-/*
-Cell elem1 = { "Dildo", "111111" };
-void govno(Cell& idiot) {
-    elem1.nextCell = &idiot;
-}
-*/
-
 int main() {
     cout << "Testing fisting\n";
     HashTable ht;
 
-    /*
-    Cell elem1 = { "Fresh Ball", "886745" };
-    ht.insertElement(elem1);
-    Cell elem2 = { "Latex Gloves", "745886" };
-    ht.insertElement(elem2);
-    */
-    // ht.showTable();
     Cell* elem1 = new Cell;
     elem1->article = "886745";
     elem1->name = "Fresh Ball";
@@ -97,7 +83,7 @@ int main() {
     elem2->name = "Latex Gloves";
     ht.insertElement(*elem2);
 
-    //ht.showTable();
-    cout << ht.hashArr[6].nextCell->article;
+    ht.showTable();
+    //cout << ht.hashArr[6].nextCell->article;
 
 }
