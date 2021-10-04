@@ -82,6 +82,11 @@ int main() {
     elem2->name = "Latex Gloves";
     ht.insertElement(*elem2);
 
+    Cell* elem3 = new Cell;
+    elem3->article = "228322";
+    elem3->name = "Dark Mask";
+    ht.insertElement(*elem3);
+
     ht.showTable();
 
 }
