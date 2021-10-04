@@ -10,7 +10,7 @@ struct Cell
     string name = "N/A";
     string article = "N/A";
 
-    struct Cell* nextCell;
+    struct Cell* nextCell = nullptr;
 
     bool isEmpty() const {
         return article == "N/A" && name == "N/A";
@@ -53,7 +53,6 @@ public:
         cout << "  " << cell.article << "     " << cell.name << endl;
         
         if (cell.nextCell) {
-            cout << "PIDORAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAS\n";
             showChain(*cell.nextCell);
         }
     }
@@ -84,6 +83,5 @@ int main() {
     ht.insertElement(*elem2);
 
     ht.showTable();
-    //cout << ht.hashArr[6].nextCell->article;
 
 }
