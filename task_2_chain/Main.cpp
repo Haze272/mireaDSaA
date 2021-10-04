@@ -10,8 +10,8 @@ struct Cell
 {
     string name = "N/A";
     string article = "N/A";
-    
-    Cell* nextCell = nullptr;
+
+    struct Cell* nextCell;
 
     bool isEmpty() const {
         return article == "N/A" && name == "N/A";
@@ -39,7 +39,7 @@ public:
         delete[] hashArr;
     }
 
-    void insertElement(Cell cell) {
+    void insertElement(Cell& cell) {
         size_t hashValue = hashIndex(cell.article, hashLength);
 
         if (hashArr[hashValue].isEmpty()) {
@@ -66,20 +66,35 @@ public:
             }
         }
     }
-
 };
+
+/*
+Cell elem1 = { "Dildo", "111111" };
+void govno(Cell& idiot) {
+    elem1.nextCell = &idiot;
+}
+*/
 
 int main() {
     cout << "Testing fisting\n";
     HashTable ht;
 
-    ht.insertElement({ "Fresh Ball", "886745" });
-    ht.insertElement({ "Latex Gloves", "745886" });
-    //ht.showTable();
-    Cell* govno = ht.hashArr[6].nextCell;
-    
+    Cell elem1 = { "Fresh Ball", "886745" };
+    ht.insertElement(elem1);
+    Cell elem2 = { "Latex Gloves", "745886" };
+    ht.insertElement(elem2);
+    //ht.insertElement({ "Elegant", "777777" });
+    // ht.showTable();
     cout << ht.hashArr[6].nextCell->article;
-
     
     //cout << ht.hashArr[6].nextCell->name;
+
+    /*
+    Cell elem2 = { "Vagina", "888888" };
+
+    govno(elem2);
+
+    cout << elem1.nextCell->article;
+    */
+
 }
