@@ -97,7 +97,7 @@ int main() {
     elem2->name = "Latex Gloves";
     ht.insertElement(*elem2);
 
-    //ht.showTable();
-    cout << ht.hashArr[6].nextCell->article;
+    ht.showTable();
+    //cout << ht.hashArr[6].nextCell->article;
 
 }
