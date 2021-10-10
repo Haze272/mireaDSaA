@@ -17,6 +17,14 @@ struct Cell
     }
 };
 
+static Cell* createCell(string name, string article) {
+    Cell* cell = new Cell;
+    cell->name = name;
+    cell->article = article;
+    cell->nextCell = NULL;
+    return cell;
+}
+
 int hashIndex(string key, int hashLen)
 {
     int sum = 0;
@@ -26,13 +34,16 @@ int hashIndex(string key, int hashLen)
 }
 
 class HashTable {
+public:
     size_t hashLength = 8;
     Cell* hashArr;
     Cell* anyElement;
+    Cell* porn;
 public:
     HashTable() {
         this->hashArr = new Cell[hashLength];
         this->anyElement = new Cell;
+        this->porn = new Cell;
     }
 
     ~HashTable() {
@@ -40,16 +51,33 @@ public:
     }
 
     void insertElement(string name, string article) {
-        anyElement->name = name;
-        anyElement->article = article;
+        if ((((double)this->realEntriesCount() + 1) / (double)this->hashLength) >= 0.75) {
+            cout << "-----------REHASHING-----------" << endl;
+            rehashTable();
+        }
 
-        size_t hashValue = hashIndex(anyElement->article, this->hashLength);
+        size_t hashValue = hashIndex(article, this->hashLength);
 
         if (this->hashArr[hashValue].isEmpty()) {
-            this->hashArr[hashValue] = *this->anyElement;
+            this->hashArr[hashValue] = *createCell(name, article);
         }
         else {
-            this->hashArr[hashValue].nextCell = this->anyElement;
+            porn = &hashArr[hashValue];
+            for (; porn->nextCell != NULL; porn = (porn)->nextCell);
+            porn->nextCell = createCell(name, article);
+        }
+    }
+
+    void insertElementByObject(Cell& cell) {
+        size_t hashValue = hashIndex(cell.article, hashLength);
+
+        if (this->hashArr[hashValue].isEmpty()) {
+            this->hashArr[hashValue] = *createCell(cell.name, cell.article);
+        }
+        else {
+            porn = &hashArr[hashValue];
+            for (; porn->nextCell != NULL; porn = (porn)->nextCell);
+            porn->nextCell = createCell(cell.name, cell.article);
         }
     }
 
@@ -83,7 +111,7 @@ public:
         return len;
     }
     
-    size_t realEntriesCount() {
+    int realEntriesCount() {
         size_t count = 0;
         for (int j = 0; j < this->hashLength; j++) {
             if (!this->hashArr[j].isEmpty()) {
@@ -99,10 +127,18 @@ public:
         this->hashArr = new Cell[this->hashLength * 2];
         size_t oldLEN_ = this->hashLength;
         this->hashLength *= 2;
+        Cell* curNode;
 
         for (int i = 0; i < oldLEN_; i++) {
             if (!oldHashArr[i].isEmpty()) {
+
                 this->insertElement(oldHashArr[i].name, oldHashArr[i].article);
+                porn = &oldHashArr[i];
+                
+                for (; porn->nextCell != NULL; porn = (porn)->nextCell) {
+                    this->insertElement(porn->name, porn->article);
+                }
+                //porn->nextCell = createCell(name, article);
             }
         }
     }
@@ -131,9 +167,14 @@ int main() {
     cout << "Testing fisting\n";
     
     HashTable ht;
-
-    for (int i = 0; i < 6; i++) {
-        ht.insertElement("Element" + to_string(i + 1), randomArticle());
+    string toName, toArticle;
+    
+    for (int i = 0; i < 10; i++) {
+        toName = "Element" + to_string(i + 1);
+        if (i == 5) {
+            ht.showTable();
+        }
+        ht.insertElement(toName, randomArticle());
     }
 
     ht.showTable();

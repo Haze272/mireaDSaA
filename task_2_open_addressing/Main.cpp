@@ -97,7 +97,7 @@ public:
     // Задание 1.4: Найти запись с заданным ключом в файле, используя хеш-таблицу.
     void findElement(string key, Cell& buffer)
     {
-        fstream in("hashTable.dat", ios::binary | ios::in);    // Открываем поток ввода
+        fstream in("hashTable.bin", ios::binary | ios::in);    // Открываем поток ввода
         int counter = 0;                                       // Счётчик, определяющий, какой по счёта запись была передана в файл
         int index = hashIndex(key, LEN_);                      // находим его индекс
 
@@ -177,7 +177,7 @@ public:
     void writeToFile(Cell& toCell) {
         ofstream ffout;
 
-        ffout.open("hashTable.dat", ios::binary | ios::out);
+        ffout.open("hashTable.bin", ios::binary | ios::out);
 
         if (!ffout)
         {
@@ -193,7 +193,7 @@ public:
     void updateFile() {
         ofstream ffout;
 
-        ffout.open("hashTable.dat", ios::binary | ios::out | ios::trunc);
+        ffout.open("hashTable.bin", ios::binary | ios::out | ios::trunc);
 
         if (!ffout)
         {
@@ -214,7 +214,7 @@ public:
     void readTheFile(Cell& Y)
     {
         
-        fstream in("hashTable.dat", ios::binary | ios::in); // Открываем поток ввода
+        fstream in("hashTable.bin", ios::binary | ios::in); // Открываем поток ввода
         
         in.read((char*)&Y, sizeof Y); //Считываем информацию в объект Y
         while (!in.eof())
