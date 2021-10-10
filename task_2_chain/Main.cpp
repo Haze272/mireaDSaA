@@ -63,13 +63,36 @@ public:
     }
 
     void showTable() {
-        for (int i = 0; i < hashLength; i++) {
+        for (int i = 0; i < this->hashLength; i++) {
             if (!hashArr[i].isEmpty()) {
                 cout << "Hash: " << i << endl;
                 cout << "  Article    Name" << endl;
                 showChain(hashArr[i]);
             }
         }
+    }
+
+    int listCell(Cell& cell) {
+        Cell* curNode = &cell;
+        int len = 0;
+
+        while (curNode) {
+            len++;
+            curNode = curNode->nextCell;
+        }
+
+        return len;
+    }
+    
+    size_t realEntriesCount() {
+        size_t count = 0;
+        for (int j = 0; j < this->hashLength; j++) {
+            if (!hashArr[j].isEmpty()) {
+                count += listCell(hashArr[j]);
+            }
+        }
+        
+        return count;
     }
 };
 
@@ -97,8 +120,8 @@ int main() {
     
     HashTable ht;
 
-    for (int i = 0; i < 20; i++) {
-        ht.insertElement("Element" + to_string(i), randomArticle());
+    for (int i = 0; i < 6; i++) {
+        ht.insertElement("Element" + to_string(i + 1), randomArticle());
     }
 
     ht.showTable();
