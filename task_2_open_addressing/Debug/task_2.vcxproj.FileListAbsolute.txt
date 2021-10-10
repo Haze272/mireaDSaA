@@ -1,1 +1,2 @@
 C:\Users\studi\Desktop\DSaA\task_2\Debug\task_2.exe
+C:\Users\studi\Desktop\DSaA\task_2_open_addressing\Debug\task_2.exe

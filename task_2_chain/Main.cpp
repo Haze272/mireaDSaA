@@ -77,15 +77,13 @@ int main() {
     elem1->name = "Fresh Ball";
     ht.insertElement(*elem1);
 
-    Cell* elem2 = new Cell;
-    elem2->article = "745886";
-    elem2->name = "Latex Gloves";
-    ht.insertElement(*elem2);
+    elem1->article = "745886";
+    elem1->name = "Latex Gloves";
+    ht.insertElement(*elem1);
 
-    Cell* elem3 = new Cell;
-    elem3->article = "228322";
-    elem3->name = "Dark Mask";
-    ht.insertElement(*elem3);
+    elem1->article = "228322";
+    elem1->name = "Dark Mask";
+    ht.insertElement(*elem1);
 
     ht.showTable();
 
