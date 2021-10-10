@@ -29,23 +29,28 @@ class HashTable {
 public:                                                  // TODO: make it private
     size_t hashLength = 8;
     Cell* hashArr;
+    Cell* anyElement;
 public:
     HashTable() {
         hashArr = new Cell[hashLength];
+        anyElement = new Cell;
     }
 
     ~HashTable() {
         delete[] hashArr;
     }
 
-    void insertElement(Cell& cell) {
-        size_t hashValue = hashIndex(cell.article, hashLength);
+    void insertElement(string name, string article) {
+        anyElement->name = name;
+        anyElement->article = article;
+
+        size_t hashValue = hashIndex(anyElement->article, hashLength);
 
         if (hashArr[hashValue].isEmpty()) {
-            hashArr[hashValue] = cell;
+            hashArr[hashValue] = *anyElement;
         }
         else {
-            hashArr[hashValue].nextCell = &cell;
+            hashArr[hashValue].nextCell = anyElement;
         }
     }
 
@@ -68,23 +73,33 @@ public:
     }
 };
 
+string randomArticle() {
+    string result, g;
+    int rDigit;
+    for (int i = 0; i < 6; i++) {
+        if (i == 0) {
+            rDigit = 1 + rand() % 9;
+        }
+        else {
+            rDigit = 0 + rand() % 9;
+        }
+        
+        g = to_string(rDigit);
+        result += g;
+    }
+    
+    return result;
+}
+
 int main() {
+    srand(time(0));
     cout << "Testing fisting\n";
+    
     HashTable ht;
 
-    Cell* elem1 = new Cell;
-    elem1->article = "886745";
-    elem1->name = "Fresh Ball";
-    ht.insertElement(*elem1);
-
-    elem1->article = "745886";
-    elem1->name = "Latex Gloves";
-    ht.insertElement(*elem1);
-
-    elem1->article = "228322";
-    elem1->name = "Dark Mask";
-    ht.insertElement(*elem1);
+    for (int i = 0; i < 20; i++) {
+        ht.insertElement("Element" + to_string(i), randomArticle());
+    }
 
     ht.showTable();
-
 }
