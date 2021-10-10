@@ -26,31 +26,30 @@ int hashIndex(string key, int hashLen)
 }
 
 class HashTable {
-public:                                                  // TODO: make it private
     size_t hashLength = 8;
     Cell* hashArr;
     Cell* anyElement;
 public:
     HashTable() {
-        hashArr = new Cell[hashLength];
-        anyElement = new Cell;
+        this->hashArr = new Cell[hashLength];
+        this->anyElement = new Cell;
     }
 
     ~HashTable() {
-        delete[] hashArr;
+        delete[] this->hashArr;
     }
 
     void insertElement(string name, string article) {
         anyElement->name = name;
         anyElement->article = article;
 
-        size_t hashValue = hashIndex(anyElement->article, hashLength);
+        size_t hashValue = hashIndex(anyElement->article, this->hashLength);
 
-        if (hashArr[hashValue].isEmpty()) {
-            hashArr[hashValue] = *anyElement;
+        if (this->hashArr[hashValue].isEmpty()) {
+            this->hashArr[hashValue] = *this->anyElement;
         }
         else {
-            hashArr[hashValue].nextCell = anyElement;
+            this->hashArr[hashValue].nextCell = this->anyElement;
         }
     }
 
@@ -58,16 +57,16 @@ public:
         cout << "  " << cell.article << "     " << cell.name << endl;
         
         if (cell.nextCell) {
-            showChain(*cell.nextCell);
+            this->showChain(*cell.nextCell);
         }
     }
 
     void showTable() {
         for (int i = 0; i < this->hashLength; i++) {
-            if (!hashArr[i].isEmpty()) {
+            if (!this->hashArr[i].isEmpty()) {
                 cout << "Hash: " << i << endl;
                 cout << "  Article    Name" << endl;
-                showChain(hashArr[i]);
+                this->showChain(this->hashArr[i]);
             }
         }
     }
@@ -87,12 +86,25 @@ public:
     size_t realEntriesCount() {
         size_t count = 0;
         for (int j = 0; j < this->hashLength; j++) {
-            if (!hashArr[j].isEmpty()) {
-                count += listCell(hashArr[j]);
+            if (!this->hashArr[j].isEmpty()) {
+                count += this->listCell(this->hashArr[j]);
             }
         }
         
         return count;
+    }
+
+    void rehashTable() {
+        Cell* oldHashArr = this->hashArr;
+        this->hashArr = new Cell[this->hashLength * 2];
+        size_t oldLEN_ = this->hashLength;
+        this->hashLength *= 2;
+
+        for (int i = 0; i < oldLEN_; i++) {
+            if (!oldHashArr[i].isEmpty()) {
+                this->insertElement(oldHashArr[i].name, oldHashArr[i].article);
+            }
+        }
     }
 };
 
