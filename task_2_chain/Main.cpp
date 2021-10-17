@@ -133,8 +133,7 @@ public:
         porn = &this->hashArr[toFindHash];
 
         Cell *ptr = porn;
-        while ( ptr != nullptr)
-        {
+        while ( ptr != nullptr) {
             if(ptr->article == art) {
                 resultNode = ptr;
             }
@@ -144,7 +143,27 @@ public:
         return resultNode;
     }
 
-    //void deleteElement() {}
+    void deleteElement(string toDelete) {
+        size_t toFindHash = hashIndex(toDelete, this->hashLength);
+        porn = &this->hashArr[toFindHash];
+
+        if (porn->article == toDelete) {
+            if (porn->nextCell) {
+                this->hashArr[toFindHash] = *(porn->nextCell);
+            } else {
+                porn->article = "N/A";
+                porn->name = "N/A";
+            }
+        } else {
+            Cell *ptr = porn;
+            while (ptr->nextCell->article != toDelete) {
+                ptr = ptr->nextCell;
+            }
+
+            ptr->nextCell = findElement(toDelete)->nextCell;
+
+        }
+    }
 };
 
 string randomArticle() {
@@ -171,8 +190,9 @@ int main() {
     
     HashTable ht;
     string toName, toArticle;
-    
-    for (int i = 0; i < 190; i++) {
+
+
+    for (int i = 0; i < 189; i++) {
         toName = "Element" + to_string(i + 1);
         if (ht.realEntriesCount() == ht.hashLength * 3 / 4 - 1) {
             cout << "\n\nThe size of hash-table is: " << ht.hashLength << "\n";
@@ -181,14 +201,17 @@ int main() {
         ht.insertElement(toName, randomArticle());
     }
 
-    ht.insertElement("ELEMENTO", "666666");
+    ht.insertElement("ELEMENT2", "666666");
+    ht.insertElement("ELEMENT3", "909909");
 
     cout << "\n\nThe size of hash-table is: " << ht.hashLength << "\n";
     ht.showTable();
 
-    /* Test of find method
     cout << endl;
     Cell* wtf = ht.findElement("666666");
     cout << wtf->article << " " << wtf->name << endl;
-    */
+
+    ht.deleteElement("444444");
+    ht.showTable();
+
 }
