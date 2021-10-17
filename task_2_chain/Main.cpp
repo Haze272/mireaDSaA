@@ -58,11 +58,13 @@ public:
 
         if (this->hashArr[hashValue].isEmpty()) {
             this->hashArr[hashValue] = *createCell(name, article);
+            this->updateFile();
         }
         else {
             porn = &hashArr[hashValue];
             for (; porn->nextCell != nullptr; porn = (porn)->nextCell);
             porn->nextCell = createCell(name, article);
+            this->updateFile();
         }
     }
 
@@ -164,6 +166,43 @@ public:
 
         }
     }
+
+    void updateFile() {
+        ofstream ffout;
+        ffout.open("hashTable.txt", ios::binary | ios::out | ios::trunc);
+
+        if (!ffout)
+        {
+            cout << "file not open";
+            return;
+        }
+
+        for (int i = 0; i < this->hashLength; i++) {
+            if (!this->hashArr[i].isEmpty()) {
+                porn = &hashArr[i];
+                Cell *ptr = porn;
+                while ( ptr != nullptr) {
+                    ffout.write((char*)ptr, sizeof(Cell*));
+                    ptr = ptr->nextCell;
+                }
+                ffout.clear();
+            }
+        }
+        ffout.close();
+    }
+
+    void readTheFile()
+    {
+
+        fstream in("hashTable.txt", ios::binary | ios::in);
+
+        in.read((char*)(this->porn), sizeof this->porn);
+        while (!in.eof()) {
+            this->insertElement(porn->article, porn->name);
+            in.read((char*)this->porn, sizeof this->porn);
+        }
+        in.close();
+    }
 };
 
 string randomArticle() {
@@ -189,6 +228,9 @@ int main() {
     cout << "Testing fisting\n";
     
     HashTable ht;
+    ht.insertElement("ass", "774777");
+
+    /*
     string toName, toArticle;
 
 
@@ -211,7 +253,7 @@ int main() {
     Cell* wtf = ht.findElement("666666");
     cout << wtf->article << " " << wtf->name << endl;
 
-    ht.deleteElement("444444");
+    ht.deleteElement("666666");
     ht.showTable();
-
+    */
 }
