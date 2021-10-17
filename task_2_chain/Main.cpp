@@ -21,7 +21,7 @@ static Cell* createCell(string name, string article) {
     Cell* cell = new Cell;
     cell->name = name;
     cell->article = article;
-    cell->nextCell = NULL;
+    cell->nextCell = nullptr;
     return cell;
 }
 
@@ -37,12 +37,10 @@ class HashTable {
 public:
     size_t hashLength = 8;
     Cell* hashArr;
-    Cell* anyElement;
     Cell* porn;
 public:
     HashTable() {
         this->hashArr = new Cell[hashLength];
-        this->anyElement = new Cell;
         this->porn = new Cell;
     }
 
@@ -63,7 +61,7 @@ public:
         }
         else {
             porn = &hashArr[hashValue];
-            for (; porn->nextCell != NULL; porn = (porn)->nextCell);
+            for (; porn->nextCell != nullptr; porn = (porn)->nextCell);
             porn->nextCell = createCell(name, article);
         }
     }
@@ -76,7 +74,7 @@ public:
         }
         else {
             porn = &hashArr[hashValue];
-            for (; porn->nextCell != NULL; porn = (porn)->nextCell);
+            for (; porn->nextCell != nullptr; porn = (porn)->nextCell);
             porn->nextCell = createCell(cell.name, cell.article);
         }
     }
@@ -127,18 +125,17 @@ public:
         this->hashArr = new Cell[this->hashLength * 2];
         size_t oldLEN_ = this->hashLength;
         this->hashLength *= 2;
-        Cell* curNode;
 
         for (int i = 0; i < oldLEN_; i++) {
             if (!oldHashArr[i].isEmpty()) {
-
-                this->insertElement(oldHashArr[i].name, oldHashArr[i].article);
                 porn = &oldHashArr[i];
-                
-                for (; porn->nextCell != NULL; porn = (porn)->nextCell) {
-                    this->insertElement(porn->name, porn->article);
+
+                Cell *ptr = porn;
+                while ( ptr != nullptr)
+                {
+                    this->insertElement(ptr->name, ptr->article);
+                    ptr = ptr->nextCell;
                 }
-                //porn->nextCell = createCell(name, article);
             }
         }
     }
@@ -169,9 +166,9 @@ int main() {
     HashTable ht;
     string toName, toArticle;
     
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 193; i++) {
         toName = "Element" + to_string(i + 1);
-        if (i == 5) {
+        if (ht.realEntriesCount() == ht.hashLength * 3 / 4 - 1) {
             ht.showTable();
         }
         ht.insertElement(toName, randomArticle());
