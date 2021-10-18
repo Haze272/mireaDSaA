@@ -15,16 +15,17 @@ struct Node {
     }
 };
 
-static Node* createNode(int key, char value) {
+int treeKey = 1;
+static Node* createNode(char value) {
     Node* node = new Node;
-    node->key = key;
+    node->key = treeKey;
     node->value = value;
 
+    treeKey++;
     return node;
 }
 
 class Tree {
-
 public:
     Node* root;
 
