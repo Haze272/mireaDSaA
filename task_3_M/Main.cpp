@@ -1,50 +1,123 @@
-#include <iostream>
-#include <string>
-
+// CPP program to convert infix to prefix
+#include <bits/stdc++.h>
 using namespace std;
 
-struct Node {
-    int key;
-    char value;
-
-    Node* left = nullptr;
-    Node* right = nullptr;
-
-    bool isEmpty() const {
-        return key && value;
-    }
-};
-
-int treeKey = 1;
-static Node* createNode(char value) {
-    Node* node = new Node;
-    node->key = treeKey;
-    node->value = value;
-
-    treeKey++;
-    return node;
+bool isOperator(char c)
+{
+    return (!isalpha(c) && !isdigit(c));
 }
 
-class Tree {
-public:
-    Node* root;
+int getPriority(char C)
+{
+    if (C == '-' || C == '+')
+        return 1;
+    else if (C == '*' || C == '/')
+        return 2;
+    else if (C == '^')
+        return 3;
+    return 0;
+}
 
-    Tree(string toTree) {
-        root = new Node;
+string infixToPostfix(string infix)
+{
+    infix = '(' + infix + ')';
+    int l = infix.size();
+    stack<char> char_stack;
+    string output;
+
+    for (int i = 0; i < l; i++) {
+
+        // If the scanned character is an
+        // operand, add it to output.
+        if (isalpha(infix[i]) || isdigit(infix[i]))
+            output += infix[i];
+
+            // If the scanned character is an
+            // ‘(‘, push it to the stack.
+        else if (infix[i] == '(')
+            char_stack.push('(');
+
+            // If the scanned character is an
+            // ‘)’, pop and output from the stack
+            // until an ‘(‘ is encountered.
+        else if (infix[i] == ')') {
+            while (char_stack.top() != '(') {
+                output += char_stack.top();
+                char_stack.pop();
+            }
+
+            // Remove '(' from the stack
+            char_stack.pop();
+        }
+
+            // Operator found
+        else
+        {
+            if (isOperator(char_stack.top()))
+            {
+                if(infix[i] == '^')
+                {
+                    while (getPriority(infix[i]) <= getPriority(char_stack.top()))
+                    {
+                        output += char_stack.top();
+                        char_stack.pop();
+                    }
+
+                }
+                else
+                {
+                    while (getPriority(infix[i]) < getPriority(char_stack.top()))
+                    {
+                        output += char_stack.top();
+                        char_stack.pop();
+                    }
+
+                }
+
+                // Push current Operator on stack
+                char_stack.push(infix[i]);
+            }
+        }
+    }
+    return output;
+}
+
+string infixToPrefix(string infix)
+{
+    /* Reverse String
+    * Replace ( with ) and vice versa
+    * Get Postfix
+    * Reverse Postfix * */
+    int l = infix.size();
+
+    // Reverse infix
+    reverse(infix.begin(), infix.end());
+
+    // Replace ( with ) and vice versa
+    for (int i = 0; i < l; i++) {
+
+        if (infix[i] == '(') {
+            infix[i] = ')';
+            i++;
+        }
+        else if (infix[i] == ')') {
+            infix[i] = '(';
+            i++;
+        }
     }
 
-    void test() {
-        cout << root->isEmpty() << endl;
-    }
+    string prefix = infixToPostfix(infix);
 
-    void insertTree() {
+    // Reverse postfix
+    reverse(prefix.begin(), prefix.end());
 
-    }
-};
+    return prefix;
+}
 
-int main() {
-    string expression = "((1+2)*(4-3))";
-
-    Tree tree(expression);
-    tree.test();
+// Driver code
+int main()
+{
+    string s = ("(1+2)*(3-4)");
+    cout << infixToPrefix(s) << std::endl;
+    return 0;
 }
