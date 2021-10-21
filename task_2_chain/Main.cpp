@@ -163,8 +163,8 @@ public:
             }
 
             ptr->nextCell = findElement(toDelete)->nextCell;
-
         }
+        updateFile();
     }
 
     void updateFile() {
@@ -243,9 +243,10 @@ public:
 
 int main() {
     srand(time(0));
-    cout << "Testing fisting\n";
-    
+
+    /*Test for insert, show, delete and write/read file methods*/
     HashTable ht;
+    // Element1, Element3 and Element5
     ht.insertElement("Element1", "111111");
     ht.insertElement("Element2", "333333");
     ht.insertElement("Element3", "555555");
@@ -254,27 +255,23 @@ int main() {
     ht.showTable();
     cout << "-----------------\n";
 
+    ht.deleteElement("999999");
+
     HashTable ht1;
-
-    Cell haya;
-    ht1.readTheFile(haya);
+    Cell celly;
+    ht1.readTheFile(celly);
     ht1.showTable();
+
+    /*Test for rehashing and many notes*/
+    cout << "\n\n-----------HashTable 3-----------\n\n\n";
+    HashTable ht2;
+    ht2.spawnRandomElement(191);
+    ht2.showTable();
+
     /*
-    ifstream fii;
-
-    if(!fii.good())
-    {
-        cerr << "Could not open the file!" << endl;
-    } else cout << "Good dick!\n";
-
-    fii.open("hashTable.txt", ios::in | ios::binary);
-    Cell* celly;
-
-    while (!fii.eof()) {
-        fii.read((char*)&celly, sizeof(Cell));
-        cout << "Element: ";
-        cout << celly->name << "  " << celly->article << endl;
-    }
-    fii.close();
-     */
+    cout << "\n\n-----------HashTable 4-----------\n\n\n";
+    HashTable ht3;
+    ht3.readTheFile(celly);
+    ht3.showTable();
+    */
 }
