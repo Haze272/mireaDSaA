@@ -58,11 +58,13 @@ public:
 
         if (this->hashArr[hashValue].isEmpty()) {
             this->hashArr[hashValue] = *createCell(name, article);
+            updateFile();
         }
         else {
             porn = &hashArr[hashValue];
             for (; porn->nextCell != nullptr; porn = (porn)->nextCell);
             porn->nextCell = createCell(name, article);
+            updateFile();
         }
     }
 
@@ -179,23 +181,28 @@ public:
         for (int i = 0; i < this->hashLength; i++) {
             if (!hashArr[i].isEmpty()) {
                 ffout.write((char*)&hashArr[i], sizeof(Cell));
+
+                Cell *ptr = &hashArr[i];
+                ptr = ptr->nextCell;
+                while (ptr != nullptr) {
+                    ffout.write((char*)ptr, sizeof(Cell));
+                    ptr = ptr->nextCell;
+                }
             }
         }
         ffout.close();
     }
 
-    // Метод, читающий записи из файла и вставляющий их в хэш-таблицу (Задание 1.2)
     void readTheFile(Cell& Y) {
-        fstream in("hashTable.txt", ios::binary | ios::in); // Открываем поток ввода
+        fstream in("hashTable.txt", ios::binary | ios::in);
 
-        in.read((char*)&Y, sizeof Y); //Считываем информацию в объект Y
+        in.read((char*)&Y, sizeof(Y));
         while (!in.eof())
         {
-            cout << "GOOOOOOVNO\n";
             insertElement(Y.name, Y.article);
-            in.read((char*)&Y, sizeof Y);
+            in.read((char*)&Y, sizeof(Y));
         }
-        in.close(); //Закрываем открытый файл
+        in.close();
     }
 
     string randomArticle() {
@@ -239,27 +246,35 @@ int main() {
     cout << "Testing fisting\n";
     
     HashTable ht;
-    Cell *damn = createCell("Pidoras", "786767");
+    ht.insertElement("Element1", "111111");
+    ht.insertElement("Element2", "333333");
+    ht.insertElement("Element3", "555555");
+    ht.insertElement("Element4", "777777");
+    ht.insertElement("Element5", "999999");
+    ht.showTable();
+    cout << "-----------------\n";
+
+    HashTable ht1;
+
+    Cell haya;
+    ht1.readTheFile(haya);
+    ht1.showTable();
     /*
-    ofstream ffout;
-
-    ffout.open("hashTable.txt", ios::binary | ios::trunc);
-
-    if (!ffout)
-    {
-        cout << "file not open";
-    }
-
-    ffout.write((char*)&damn, sizeof(Cell));
-    ffout.close();
-    */
     ifstream fii;
+
+    if(!fii.good())
+    {
+        cerr << "Could not open the file!" << endl;
+    } else cout << "Good dick!\n";
+
     fii.open("hashTable.txt", ios::in | ios::binary);
     Cell* celly;
 
     while (!fii.eof()) {
-        fii.read((char *) &celly, sizeof(Cell));
+        fii.read((char*)&celly, sizeof(Cell));
+        cout << "Element: ";
         cout << celly->name << "  " << celly->article << endl;
     }
     fii.close();
+     */
 }
