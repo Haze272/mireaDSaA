@@ -170,7 +170,7 @@ public:
     void updateFile() {
         ofstream ffout;
 
-        ffout.open("hashTable.txt", ios::binary);
+        ffout.open("hashTable.txt", ios::binary | ios::trunc);
 
         if (!ffout)
         {
@@ -265,13 +265,13 @@ int main() {
     /*Test for rehashing and many notes*/
     cout << "\n\n-----------HashTable 3-----------\n\n\n";
     HashTable ht2;
-    ht2.spawnRandomElement(191);
+    ht2.spawnRandomElement(23);
     ht2.showTable();
 
-    /*
+
     cout << "\n\n-----------HashTable 4-----------\n\n\n";
     HashTable ht3;
     ht3.readTheFile(celly);
     ht3.showTable();
-    */
+
 }
