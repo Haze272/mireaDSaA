@@ -7,7 +7,7 @@ struct Node {
 
     Node *lNode, *rNode;
 };
-Node *tree = NULL;
+Node *tree;
 
 void push(double a, Node **t) {
     if ((*t) == NULL) {
@@ -39,10 +39,27 @@ void printTree(Node *t, int u) {
     printTree(t->lNode, ++u);
 }
 
+void summer(Node *t, int u, double currentData) {
+    if (t == NULL) return;
+
+    summer(t->rNode, ++u);
+
+    averageData += t->info;
+    u--;
+
+    summer(t->lNode, ++u);
+}
+
+double average(Node *t) {
+    double averageData = 0;
+    summer(t, 0, averageData);
+    // TODO
+}
+
 int main() {
     int n; //Количество элементов
-    int s; //Число, передаваемое в дерево
-    cout << "Enter the quantity of elements  ";
+    double s; //Число, передаваемое в дерево
+    cout << "Enter the quantity of elements: ";
     cin >> n; //Вводим количество элементов
 
     for (int i = 0; i < n; ++i) {
@@ -53,4 +70,7 @@ int main() {
     }
     cout << "Entire tree\n";
     printTree(tree,0);
+
+    average(tree, 0);
+    cout << "The average is" << averageData;
 }
