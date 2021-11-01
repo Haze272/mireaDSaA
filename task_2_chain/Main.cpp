@@ -37,11 +37,11 @@ class HashTable {
 public:
     size_t hashLength = 8;
     Cell* hashArr;
-    Cell* porn;
+    Cell* elementius;
 public:
     HashTable() {
         this->hashArr = new Cell[hashLength];
-        this->porn = new Cell;
+        this->elementius = new Cell;
     }
 
     ~HashTable() {
@@ -61,9 +61,9 @@ public:
             updateFile();
         }
         else {
-            porn = &hashArr[hashValue];
-            for (; porn->nextCell != nullptr; porn = (porn)->nextCell);
-            porn->nextCell = createCell(name, article);
+            elementius = &hashArr[hashValue];
+            for (; elementius->nextCell != nullptr; elementius = (elementius)->nextCell);
+            elementius->nextCell = createCell(name, article);
             updateFile();
         }
     }
@@ -117,9 +117,9 @@ public:
 
         for (int i = 0; i < oldLEN_; i++) {
             if (!oldHashArr[i].isEmpty()) {
-                porn = &oldHashArr[i];
+                elementius = &oldHashArr[i];
 
-                Cell *ptr = porn;
+                Cell *ptr = elementius;
                 while ( ptr != nullptr)
                 {
                     this->insertElement(ptr->name, ptr->article);
@@ -132,9 +132,9 @@ public:
     Cell* findElement(string art) {
         Cell* resultNode;
         size_t toFindHash = hashIndex(art, this->hashLength);
-        porn = &this->hashArr[toFindHash];
+        elementius = &this->hashArr[toFindHash];
 
-        Cell *ptr = porn;
+        Cell *ptr = elementius;
         while ( ptr != nullptr) {
             if(ptr->article == art) {
                 resultNode = ptr;
@@ -147,17 +147,17 @@ public:
 
     void deleteElement(string toDelete) {
         size_t toFindHash = hashIndex(toDelete, this->hashLength);
-        porn = &this->hashArr[toFindHash];
+        elementius = &this->hashArr[toFindHash];
 
-        if (porn->article == toDelete) {
-            if (porn->nextCell) {
-                this->hashArr[toFindHash] = *(porn->nextCell);
+        if (elementius->article == toDelete) {
+            if (elementius->nextCell) {
+                this->hashArr[toFindHash] = *(elementius->nextCell);
             } else {
-                porn->article = "N/A";
-                porn->name = "N/A";
+                elementius->article = "N/A";
+                elementius->name = "N/A";
             }
         } else {
-            Cell *ptr = porn;
+            Cell *ptr = elementius;
             while (ptr->nextCell->article != toDelete) {
                 ptr = ptr->nextCell;
             }

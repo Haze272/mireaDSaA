@@ -39,22 +39,9 @@ void printTree(Node *t, int u) {
     printTree(t->lNode, ++u);
 }
 
-void summer(Node *t, int u, double currentData) {
-    if (t == NULL) return;
+// TODO average function
 
-    summer(t->rNode, ++u);
-
-    averageData += t->info;
-    u--;
-
-    summer(t->lNode, ++u);
-}
-
-double average(Node *t) {
-    double averageData = 0;
-    summer(t, 0, averageData);
-    // TODO
-}
+// TODO deleteTree function
 
 int main() {
     int n; //Количество элементов
@@ -70,7 +57,4 @@ int main() {
     }
     cout << "Entire tree\n";
     printTree(tree,0);
-
-    average(tree, 0);
-    cout << "The average is" << averageData;
 }
