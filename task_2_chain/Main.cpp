@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include <time.h>
+#include <chrono>
 
 using namespace std;
 
@@ -255,6 +255,8 @@ int main() {
     ht.showTable();
     cout << "-----------------\n";
 
+
+
     ht.deleteElement("999999");
 
     HashTable ht1;
@@ -265,8 +267,21 @@ int main() {
     /*Test for rehashing and many notes*/
     cout << "\n\n-----------HashTable 3-----------\n\n\n";
     HashTable ht2;
-    ht2.spawnRandomElement(23);
+    ht2.spawnRandomElement(22);
+
+    ht2.insertElement("ElementToFind", "777777");
+
     ht2.showTable();
+
+    cout << "--------------------\n";
+
+    auto t1 = chrono::high_resolution_clock::now();
+    Cell* toFind = ht2.findElement("777777");
+    auto t2 = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
+
+    cout << "The find method was executed in " << duration << endl;
+    cout << "Found " << toFind->article << " " << toFind->name << endl;
 
 
     cout << "\n\n-----------HashTable 4-----------\n\n\n";
