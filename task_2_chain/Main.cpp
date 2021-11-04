@@ -255,9 +255,14 @@ int main() {
     ht.showTable();
     cout << "-----------------\n";
 
-
+    auto tDelStart = chrono::high_resolution_clock::now();
 
     ht.deleteElement("999999");
+
+    auto tDelEnd = chrono::high_resolution_clock::now();
+    auto durationDelete = chrono::duration_cast<std::chrono::microseconds>( tDelEnd - tDelStart ).count();
+
+    cout << "The delete method was executed in " << durationDelete << endl;
 
     HashTable ht1;
     Cell celly;
@@ -269,7 +274,14 @@ int main() {
     HashTable ht2;
     ht2.spawnRandomElement(22);
 
+    auto tStart = chrono::high_resolution_clock::now();
+
     ht2.insertElement("ElementToFind", "777777");
+
+    auto tEnd = chrono::high_resolution_clock::now();
+    auto durationIns = chrono::duration_cast<std::chrono::microseconds>( tEnd - tStart ).count();
+
+    cout << "The Insert method was executed in " << durationIns << endl;
 
     ht2.showTable();
 
@@ -280,8 +292,9 @@ int main() {
     auto t2 = chrono::high_resolution_clock::now();
     auto duration = chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
 
-    cout << "The find method was executed in " << duration << endl;
     cout << "Found " << toFind->article << " " << toFind->name << endl;
+    cout << "The find method was executed in " << duration << endl;
+
 
 
     cout << "\n\n-----------HashTable 4-----------\n\n\n";
