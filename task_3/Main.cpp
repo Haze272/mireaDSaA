@@ -40,6 +40,17 @@ void printTree(Node *t, int u) {
 }
 
 // TODO average function
+double summary;
+void sumTree(Node *t, int u) {
+    if (t == NULL) return;
+
+    sumTree(t->rNode, ++u);
+
+    summary += t->info;
+    u--;
+
+    sumTree(t->lNode, ++u);
+}
 
 // TODO deleteTree function
 
@@ -57,4 +68,8 @@ int main() {
     }
     cout << "Entire tree\n";
     printTree(tree,0);
+
+    cout << "\n---------Sum---------\n\n\n";
+    sumTree(tree, 0);
+    cout << summary;
 }
