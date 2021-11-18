@@ -69,7 +69,7 @@ public:
     }
 
     void showChain(Cell& cell) {
-        cout << "  " << cell.article << "     " << cell.name << endl;
+        cout << "        " << cell.article << "     " << cell.name << endl;
         
         if (cell.nextCell) {
             this->showChain(*cell.nextCell);
@@ -77,10 +77,11 @@ public:
     }
 
     void showTable() {
+
+        cout << "        Article    Name" << endl;
         for (int i = 0; i < this->hashLength; i++) {
             if (!this->hashArr[i].isEmpty()) {
                 cout << "Hash: " << i << endl;
-                cout << "  Article    Name" << endl;
                 this->showChain(this->hashArr[i]);
             }
         }
@@ -244,7 +245,7 @@ public:
 int main() {
     srand(time(0));
 
-    /*Test for insert, show, delete and write/read file methods*/
+    cout << "\n\n-----------HashTable 0 (Delete test)-----------\n\n\n";
     HashTable ht;
     // Element1, Element3 and Element5
     ht.insertElement("Element1", "111111");
@@ -264,13 +265,15 @@ int main() {
 
     cout << "The delete method was executed in " << durationDelete << endl;
 
+    cout << "\n\n-----------HashTable 2 (Read from file)-----------\n\n\n";
+
     HashTable ht1;
     Cell celly;
     ht1.readTheFile(celly);
     ht1.showTable();
 
     /*Test for rehashing and many notes*/
-    cout << "\n\n-----------HashTable 3-----------\n\n\n";
+    cout << "\n\n-----------HashTable 3 (Insert test)-----------\n\n\n";
     HashTable ht2;
     ht2.spawnRandomElement(22);
 
@@ -297,9 +300,29 @@ int main() {
 
 
 
-    cout << "\n\n-----------HashTable 4-----------\n\n\n";
+    cout << "\n\n-----------HashTable 4 (Rehashing test)-----------\n";
     HashTable ht3;
-    ht3.readTheFile(celly);
+
+    ht3.insertElement("LCD Monitor", "218374");
+    ht3.insertElement("Gaming keyboard", "100023");
+    ht3.insertElement("CPU Intel Core i-9965k", "898989");
+    ht3.insertElement("MacBook Air 2022", "467956");
+    ht3.insertElement("Yamaha E-Piano", "129041");
     ht3.showTable();
 
+    cout << "Size of hashtable is 8, so lets add and 6th element to cast rehashing\n\n";
+    ht3.insertElement("Wireless mouse", "228322");
+    ht3.showTable();
+
+
+
+    cout << "\n\n-----------HashTable 5 (Collision test)-----------\n";
+    HashTable ht4;
+    ht4.insertElement("Electronic guitar", "898989");
+    ht4.insertElement("Wooden recorder F#", "183724");
+    ht4.showTable();
+
+    cout << "\nLets add an element with article that will cast collision\n\n";
+    ht4.insertElement("Plastic Flute", "989898");
+    ht4.showTable();
 }
