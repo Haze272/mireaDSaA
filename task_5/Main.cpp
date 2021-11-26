@@ -154,15 +154,11 @@ int main() {
 		cout << "3 - Вывод кратчайшего пути от одной вершины к другой с помощью метода Дейкстры\n";
 		cout << "0 - Выход из программы\n";
 		cin >> t;
-		if (t == 0) break;
-		else if (t == 1) {
-			GrapH.printGraph(Gr);
-		}
-		else if (t == 2) {
-			GrapH.degreeVertex(Gr);
-		}
-		else if (t == 3) {
-			GrapH.dijkstra(Gr);
+		switch (t) {
+			case 0: break;
+			case 1: GrapH.printGraph(Gr);
+			case 2: GrapH.degreeVertex(Gr);
+			case 3: GrapH.dijkstra(Gr);
 		}
 	}
 }
